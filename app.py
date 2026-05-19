@@ -47,7 +47,7 @@ st.markdown("""
     }
     
     /* =========================================================
-       БАЗОВЫЙ ФОН И ГЛОБАЛЬНЫЕ ШРИФТЫ
+       БАЗОВЫЙ ФОН И ГЛОБАЛЬНЫЕ ШРИФТЫ (СУПЕР-КРУПНЫЕ)
        ========================================================= */
     .stApp {
         background-color: #FFFFFF;
@@ -56,7 +56,7 @@ st.markdown("""
     
     /* Принудительное радикальное увеличение для всех базовых текстов в приложении */
     .stApp p, .stApp span, .stApp label, .stApp li {
-        font-size: 25px !important;
+        font-size: 30px !important;
         line-height: 1.8 !important;
     }
     
@@ -72,7 +72,7 @@ st.markdown("""
         -webkit-text-fill-color: #111827 !important;
         border: 1.5px solid #D1D5DB !important;
         border-radius: 8px !important;
-        font-size: 22px !important;
+        font-size: 26px !important;
     }
     [data-testid="stNumberInputContainer"],
     [data-testid="stNumberInput"] > div {
@@ -100,11 +100,11 @@ st.markdown("""
         background-color: #2563EB !important;
         border: 3px solid #FFFFFF !important;
         box-shadow: 0 2px 8px rgba(37, 99, 235, 0.5) !important;
-        width: 26px !important;
-        height: 26px !important;
+        width: 28px !important;
+        height: 28px !important;
     }
     .stSlider [data-baseweb="slider"] div div span {
-        font-size: 22px !important;
+        font-size: 26px !important;
         color: #2563EB !important;
         font-weight: bold !important;
     }
@@ -121,22 +121,22 @@ st.markdown("""
     }
     [data-testid="stSidebar"] label,
     [data-testid="stSidebar"] .stMarkdown p {
-        font-size: 23px !important;
+        font-size: 26px !important;
         font-weight: 600 !important;
         color: #374151 !important;
     }
     [data-testid="stSidebar"] h2 {
-        font-size: 38px !important;
+        font-size: 42px !important;
         color: #1E40AF !important;
         font-weight: bold !important;
     }
     
     /* =========================================================
-       ЗАГОЛОВКИ — БОЛЬШЕ
+       ЗАГОЛОВКИ — ЕЩЕ БОЛЬШЕ
        ========================================================= */
     h1 {
         color: #1E40AF !important;
-        font-size: 54px !important;
+        font-size: 60px !important;
         font-weight: bold !important;
         text-align: center;
         padding: 18px 0;
@@ -145,22 +145,22 @@ st.markdown("""
     }
     h2 {
         color: #1E40AF !important;
-        font-size: 42px !important;
+        font-size: 48px !important;
         font-weight: bold !important;
         margin-top: 40px !important;
     }
     h3 {
         color: #2563EB !important;
-        font-size: 34px !important;
+        font-size: 38px !important;
         font-weight: 600 !important;
         margin-top: 30px !important;
     }
     
     /* =========================================================
-       ОСНОВНОЙ ТЕКСТ — БОЛЬШЕ
+       ОСНОВНОЙ ТЕКСТ
        ========================================================= */
     .stMarkdown p, .stMarkdown li {
-        font-size: 26px !important;
+        font-size: 30px !important;
         line-height: 1.8 !important;
         color: #1F2937 !important;
     }
@@ -171,21 +171,21 @@ st.markdown("""
     
     /* Таблицы из markdown */
     .stMarkdown table {
-        font-size: 24px !important;
+        font-size: 26px !important;
     }
     .stMarkdown table th {
         background-color: #2563EB !important;
         color: #FFFFFF !important;
-        font-size: 24px !important;
+        font-size: 26px !important;
         padding: 16px !important;
     }
     .stMarkdown table td {
         padding: 14px !important;
-        font-size: 22px !important;
+        font-size: 24px !important;
     }
     
     /* =========================================================
-       ВКЛАДКИ — КРУПНЫЕ
+       ВКЛАДКИ — ЕЩЕ КРУПНЕЕ
        ========================================================= */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
@@ -195,7 +195,7 @@ st.markdown("""
         border: 1px solid #E5E7EB;
     }
     .stTabs [data-baseweb="tab"] {
-        font-size: 25px !important;
+        font-size: 28px !important;
         font-weight: 600 !important;
         padding: 20px 32px !important;
         background-color: #FFFFFF !important;
@@ -229,7 +229,7 @@ st.markdown("""
         box-shadow: 0 4px 14px rgba(220, 38, 38, 0.15);
     }
     .metric-box-m1 p, .metric-box-m2 p {
-        font-size: 26px !important;
+        font-size: 30px !important;
         margin: 12px 0 !important;
         color: #1F2937 !important;
     }
@@ -243,7 +243,7 @@ st.markdown("""
         border-radius: 14px;
         border-left: 8px solid #F59E0B;
         margin: 32px 0;
-        font-size: 26px !important;
+        font-size: 30px !important;
         color: #1F2937;
         box-shadow: 0 3px 10px rgba(245, 158, 11, 0.15);
     }
@@ -253,7 +253,7 @@ st.markdown("""
         border-radius: 14px;
         border-left: 6px solid #7C3AED;
         margin: 24px 0;
-        font-size: 25px !important;
+        font-size: 28px !important;
         line-height: 1.8 !important;
         color: #1F2937;
     }
@@ -262,7 +262,7 @@ st.markdown("""
        КНОПКИ
        ========================================================= */
     .stDownloadButton button, .stButton button {
-        font-size: 28px !important;
+        font-size: 32px !important;
         padding: 30px 40px !important;
         width: 100% !important;
         color: #FFFFFF !important;
@@ -302,7 +302,7 @@ st.markdown("""
         width: 100%;
         border-collapse: collapse;
         margin: 28px 0;
-        font-size: 24px;
+        font-size: 26px;
         text-align: center;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
         border-radius: 12px;
@@ -313,7 +313,7 @@ st.markdown("""
         color: #FFFFFF !important;
         padding: 24px 18px;
         border: none;
-        font-size: 26px !important;
+        font-size: 28px !important;
         font-weight: bold;
     }
     .custom-table td {
@@ -321,7 +321,7 @@ st.markdown("""
         border: 1px solid #E5E7EB;
         background-color: #FFFFFF;
         color: #111827 !important;
-        font-size: 23px !important;
+        font-size: 25px !important;
     }
     .custom-table tr:nth-child(even) td {
         background-color: #F9FAFB;
@@ -334,11 +334,11 @@ st.markdown("""
        LATEX И ПРОЧЕЕ
        ========================================================= */
     .katex {
-        font-size: 1.5em !important;
+        font-size: 1.7em !important;
         color: #111827 !important;
     }
     .stSlider label, .stNumberInput label {
-        font-size: 23px !important;
+        font-size: 26px !important;
         font-weight: 600 !important;
         color: #374151 !important;
     }
@@ -346,7 +346,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# MATPLOTLIB — белая тема, яркие линии
+# MATPLOTLIB — УМЕНЬШЕННЫЕ ШРИФТЫ ПОДПИСЕЙ ДЛЯ СБАЛАНСИРОВАННОГО ВИДА
 # =====================================================================
 plt.rcParams.update({
     'axes.facecolor':   '#FFFFFF',
@@ -357,16 +357,16 @@ plt.rcParams.update({
     'axes.labelcolor':  '#111827',
     'xtick.color':      '#111827',
     'ytick.color':      '#111827',
-    'axes.labelsize':   20,      # подписи осей
-    'xtick.labelsize':  17,      # значения на оси X
-    'ytick.labelsize':  17,      # значения на оси Y
-    'legend.fontsize':  17,      # легенда
-    'axes.titlesize':   22,      # заголовок графика
+    'axes.labelsize':   13,      # аккуратные подписи осей
+    'xtick.labelsize':  11,      # значения на оси X
+    'ytick.labelsize':  11,      # значения на оси Y
+    'legend.fontsize':  11,      # легенда
+    'axes.titlesize':   15,      # заголовок графика
     'axes.titleweight': 'bold',
     'axes.edgecolor':   '#9CA3AF',
     'axes.linewidth':   1.5,
     'axes.titlecolor':  '#1E40AF',
-    'figure.dpi':       110,     # повышенная чёткость
+    'figure.dpi':       110,     
 })
 
 # Цвета для линий графиков
@@ -458,9 +458,9 @@ with tab1:
         <div class="metric-box-m1">
             <h3 style="color:#1E40AF; margin-top:0;">Модель 1 — без учёта временной стоимости денег</h3>
             <p>Требуемый размер резервного фонда:<br>
-            <b style="font-size:42px; color:#2563EB;">{r1[0]:,.0f} ₽</b></p>
+            <b style="font-size:52px; color:#2563EB;">{r1[0]:,.0f} ₽</b></p>
             <p>Расчётный брутто-тариф:<br>
-            <b style="font-size:42px; color:#2563EB;">{r1[2]:.4f} %</b></p>
+            <b style="font-size:52px; color:#2563EB;">{r1[2]:.4f} %</b></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -469,9 +469,9 @@ with tab1:
         <div class="metric-box-m2">
             <h3 style="color:#991B1B; margin-top:0;">Модель 2 — с учётом инвестиционного дохода</h3>
             <p>Требуемый размер резервного фонда:<br>
-            <b style="font-size:42px; color:#DC2626;">{r2[0]:,.0f} ₽</b></p>
+            <b style="font-size:52px; color:#DC2626;">{r2[0]:,.0f} ₽</b></p>
             <p>Расчётный брутто-тариф:<br>
-            <b style="font-size:42px; color:#DC2626;">{r2[2]:.4f} %</b></p>
+            <b style="font-size:52px; color:#DC2626;">{r2[2]:.4f} %</b></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -480,8 +480,8 @@ with tab1:
     <div class="info-block">
         💡 <b>Экономическая интерпретация результата.</b><br><br>
         Учёт временной стоимости капитала в Модели 2 позволяет снизить тарифную нагрузку
-        на страхователей на <b style="font-size:34px; color:#10B981;">{savings:.2f}%</b>
-        при сохранении заданного уровня financial устойчивости фонда
+        на страхователей на <b style="font-size:40px; color:#10B981;">{savings:.2f}%</b>
+        при сохранении заданного уровня финансовой устойчивости фонда
         <b>{P_gamma*100:.1f}%</b>. Разница объясняется тем, что Модель 2 корректно
         учитывает доход страховщика от инвестирования временно свободных средств
         до момента наступления страховых событий.
@@ -593,7 +593,7 @@ with tab2:
     st.pyplot(fig3)
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 3 — 3D
+# ВКЛАДКА 3 — УМЕНЬШЕННЫЕ ПОДПИСИ НА ПОКРЫТИИ 3D ПО ВАШЕЙ ПРОСЬБЕ
 # ---------------------------------------------------------------------
 with tab3:
     st.markdown("## Трёхмерная поверхность тарифных решений")
@@ -631,8 +631,8 @@ with tab3:
             z=Z, x=T_grid, y=D_grid,
             colorscale='Plasma',
             colorbar=dict(
-                title=dict(text="Тариф, %", font=dict(size=20, color='#111827')),
-                tickfont=dict(size=16, color='#111827'),
+                title=dict(text="Тариф, %", font=dict(size=14, color='#111827')), # аккуратный размер
+                tickfont=dict(size=11, color='#111827'), # аккуратный размер
                 thickness=25,
                 len=0.75
             ),
@@ -645,25 +645,25 @@ with tab3:
     fig_3d.update_layout(
         scene=dict(
             xaxis=dict(
-                title=dict(text='Срок T, лет', font=dict(size=22, color='#111827')),
-                tickfont=dict(size=17, color='#111827'),
+                title=dict(text='Срок T, лет', font=dict(size=14, color='#111827')), # уменьшено
+                tickfont=dict(size=11, color='#111827'), # уменьшено
                 backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
             ),
             yaxis=dict(
-                title=dict(text='Ставка δ', font=dict(size=22, color='#111827')),
-                tickfont=dict(size=17, color='#111827'),
+                title=dict(text='Ставка δ', font=dict(size=14, color='#111827')), # уменьшено
+                tickfont=dict(size=11, color='#111827'), # уменьшено
                 backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
             ),
             zaxis=dict(
-                title=dict(text='Тариф, %', font=dict(size=22, color='#111827')),
-                tickfont=dict(size=17, color='#111827'),
+                title=dict(text='Тариф, %', font=dict(size=14, color='#111827')), # уменьшено
+                tickfont=dict(size=11, color='#111827'), # уменьшено
                 backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
             ),
             camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
         ),
         height=900,
         paper_bgcolor='#FFFFFF',
-        font=dict(color='#111827', size=18),
+        font=dict(color='#111827', size=13), # уменьшено для баланса
         margin=dict(l=10, r=10, b=10, t=40)
     )
     st.plotly_chart(fig_3d, use_container_width=True)
