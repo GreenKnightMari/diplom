@@ -619,17 +619,16 @@ with tab3:
     for i in range(T_grid.shape[0]):
         for j in range(T_grid.shape[1]):
             Z[i, j] = calc_model(True, temp_T=T_grid[i, j], temp_delta=D_grid[i, j])[2]
-
-   fig_3d = go.Figure(data=[
-        go.Surface(
-            z=Z, x=T_grid, y=D_grid,
-            colorscale='Plasma',
-            colorbar=dict(
-                title=dict(text="Тариф, %", font=dict(size=20, color='#111827')),
-                tickfont=dict(size=16, color='#111827'),
-                thickness=25,
-                len=0.75
-            ),
+  fig_3d = go.Figure(data=[
+      go.Surface(
+          z=Z, x=T_grid, y=D_grid,
+          colorscale='Plasma',
+          colorbar=dict(
+              title=dict(text="Тариф, %", font=dict(size=20, color='#111827')),
+              tickfont=dict(size=16, color='#111827'),
+              thickness=25,
+              len=0.75
+          ),
             contours={
                 "z": {"show": True, "start": Z.min(), "end": Z.max(),
                       "size": (Z.max() - Z.min())/12, "color": "#1E40AF"}
