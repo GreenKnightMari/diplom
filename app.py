@@ -363,6 +363,12 @@ plt.rcParams.update({
     'axes.titlecolor':  '#1E40AF',
     'figure.dpi':       110,     # повышенная чёткость
 })
+# Цвета для линий графиков
+COLOR_M1     = '#2563EB'   # синий (Модель 1)
+COLOR_M2     = '#DC2626'   # красный (Модель 2)
+COLOR_REF    = '#F59E0B'   # янтарный (уровень надёжности)
+COLOR_ACCENT = '#7C3AED'   # фиолетовый (график по δ)
+COLOR_GREEN  = '#10B981'   # зелёный (акцент)
 
 # =====================================================================
 # ЗАГОЛОВОК
@@ -615,47 +621,46 @@ with tab3:
             Z[i, j] = calc_model(True, temp_T=T_grid[i, j], temp_delta=D_grid[i, j])[2]
 
    fig_3d = go.Figure(data=[
-    go.Surface(
-        z=Z, x=T_grid, y=D_grid,
-        colorscale='Plasma',
-        colorbar=dict(
-            title=dict(text="Тариф, %", font=dict(size=20, color='#111827')),
-            tickfont=dict(size=16, color='#111827'),
-            thickness=25,
-            len=0.75
+        go.Surface(
+            z=Z, x=T_grid, y=D_grid,
+            colorscale='Plasma',
+            colorbar=dict(
+                title=dict(text="Тариф, %", font=dict(size=20, color='#111827')),
+                tickfont=dict(size=16, color='#111827'),
+                thickness=25,
+                len=0.75
+            ),
+            contours={
+                "z": {"show": True, "start": Z.min(), "end": Z.max(),
+                      "size": (Z.max() - Z.min())/12, "color": "#1E40AF"}
+            }
+        )
+    ])
+    fig_3d.update_layout(
+        scene=dict(
+            xaxis=dict(
+                title=dict(text='Срок T, лет', font=dict(size=22, color='#111827')),
+                tickfont=dict(size=17, color='#111827'),
+                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
+            ),
+            yaxis=dict(
+                title=dict(text='Ставка δ', font=dict(size=22, color='#111827')),
+                tickfont=dict(size=17, color='#111827'),
+                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
+            ),
+            zaxis=dict(
+                title=dict(text='Тариф, %', font=dict(size=22, color='#111827')),
+                tickfont=dict(size=17, color='#111827'),
+                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
+            ),
+            camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
         ),
-        contours={
-            "z": {"show": True, "start": Z.min(), "end": Z.max(),
-                  "size": (Z.max() - Z.min())/12, "color": "#1E40AF"}
-        }
+        height=900,
+        paper_bgcolor='#FFFFFF',
+        font=dict(color='#111827', size=18),
+        margin=dict(l=10, r=10, b=10, t=40)
     )
-])
-   fig_3d.update_layout(
-    scene=dict(
-        xaxis=dict(
-            title=dict(text='Срок T, лет', font=dict(size=22, color='#111827')),
-            tickfont=dict(size=17, color='#111827'),
-            backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
-        ),
-        yaxis=dict(
-            title=dict(text='Ставка δ', font=dict(size=22, color='#111827')),
-            tickfont=dict(size=17, color='#111827'),
-            backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
-        ),
-        zaxis=dict(
-            title=dict(text='Тариф, %', font=dict(size=22, color='#111827')),
-            tickfont=dict(size=17, color='#111827'),
-            backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
-        ),
-        camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
-    ),
-    height=900,
-    paper_bgcolor='#FFFFFF',
-    font=dict(color='#111827', size=18),
-    margin=dict(l=10, r=10, b=10, t=40)
-)
     st.plotly_chart(fig_3d, use_container_width=True)
-
     z_min_idx = np.unravel_index(np.argmin(Z), Z.shape)
     z_max_idx = np.unravel_index(np.argmax(Z), Z.shape)
     st.markdown(f"""
