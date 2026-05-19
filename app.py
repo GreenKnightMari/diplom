@@ -12,11 +12,11 @@ st.set_page_config(
 )
 
 # =====================================================================
-# ПАЛИТРА И ГЛОБАЛЬНЫЕ СТИЛИ (ИНТЕРФЕЙС КРУПНЫЙ, ГРАФИКИ ВИДИМЫ)
+# ПАЛИТРА И ГЛОБАЛЬНЫЕ СТИЛИ (БЕЗОПАСНОЕ УВЕЛИЧЕНИЕ)
 # =====================================================================
 st.markdown("""
     <style>
-    /* ВЕРХНИЙ HEADER STREAMLIT — голубой/синий градиент */
+    /* ВЕРХНИЙ HEADER STREAMLIT */
     header[data-testid="stHeader"] {
         background: linear-gradient(90deg, #2563EB 0%, #3B82F6 50%, #06B6D4 100%) !important;
         height: 60px !important;
@@ -32,16 +32,23 @@ st.markdown("""
         padding-top: 3rem;
     }
     
-    /* БАЗОВЫЙ ФОН И ГЛОБАЛЬНЫЕ ШРИФТЫ (СУПЕР-КРУПНЫЕ) */
+    /* БАЗОВЫЙ ФОН */
     .stApp {
         background-color: #FFFFFF;
         color: #111827;
     }
     
-    /* Принудительное увеличение базовых текстов, исключая элементы внутри графиков */
-    .stApp p, .stApp span:not([class*="colormodel"]):not([class*="xtick"]):not([class*="ytick"]), .stApp label, .stApp li {
+    /* =========================================================
+       ОСНОВНОЙ ТЕКСТ (СУПЕР-КРУПНЫЙ, НО БЕЗОПАСНЫЙ)
+       ========================================================= */
+    .stMarkdown p, .stMarkdown li {
         font-size: 30px !important;
         line-height: 1.8 !important;
+        color: #1F2937 !important;
+    }
+    .stMarkdown strong, .stMarkdown b {
+        color: #1E40AF !important;
+        font-weight: bold !important;
     }
     
     /* БЕЛАЯ КЛИЕНТСКАЯ ЗОНА ДЛЯ ВВОДА */
@@ -61,10 +68,12 @@ st.markdown("""
         background-color: #FFFFFF !important;
         border-radius: 8px !important;
     }
-    [data-testid="stNumberInput"] button {
-        background-color: #F3F4F6 !important;
-        color: #111827 !important;
-        border: 1px solid #D1D5DB !important;
+    
+    /* ПОДПИСИ ЭЛЕМЕНТОВ ВВОДА И ПОЛЗУНКОВ */
+    .stSlider label, .stNumberInput label {
+        font-size: 26px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
     }
     
     /* СЛАЙДЕРЫ */
@@ -125,17 +134,6 @@ st.markdown("""
         font-size: 38px !important;
         font-weight: 600 !important;
         margin-top: 30px !important;
-    }
-    
-    /* ОСНОВНОЙ ТЕКСТ */
-    .stMarkdown p, .stMarkdown li {
-        font-size: 30px !important;
-        line-height: 1.8 !important;
-        color: #1F2937 !important;
-    }
-    .stMarkdown strong, .stMarkdown b {
-        color: #1E40AF !important;
-        font-weight: bold !important;
     }
     
     /* ВКЛАДКИ */
@@ -206,7 +204,7 @@ st.markdown("""
         color: #1F2937;
     }
     
-    /* КНОПКИ (СУПЕР-КРУПНЫЕ) */
+    /* КНОПКИ */
     .stDownloadButton button, .stButton button {
         font-size: 32px !important;
         padding: 30px 40px !important;
@@ -265,10 +263,6 @@ st.markdown("""
     .katex {
         font-size: 1.6em !important;
         color: #111827 !important;
-    }
-    .stSlider label, .stNumberInput label {
-        font-size: 26px !important;
-        font-weight: 600 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -482,7 +476,7 @@ with tab4:
     st.latex(r"\chi_2 = N \lambda (m_0^2 + D_0) \cdot \frac{1 - e^{-2\delta T}}{2\delta}")
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 5 — ОТЧЁТЫ И ЭКСПОРТ (ОБЕ КНОПКИ НА МЕСТЕ)
+# ВКЛАДКА 5 — ОТЧЁТЫ И ЭКСПОРТ
 # ---------------------------------------------------------------------
 with tab5:
     st.markdown("## Матрица плановых показателей по годам")
@@ -516,7 +510,6 @@ with tab5:
     st.markdown("---")
     st.markdown("## 📥 Экспорт результатов расчёта")
 
-    # 1. Генерация и кнопка скачивания таблицы CSV
     csv_data = pd.DataFrame([{
         "Год_T": i+1,
         "Фонд_М1_руб": calc_model(False, temp_T=i+1)[0],
@@ -533,7 +526,6 @@ with tab5:
         use_container_width=True
     )
 
-    # 2. Генерация и кнопка скачивания текстового отчета
     savings_val = (1 - r2[2]/r1[2]) * 100 if r1[2] > 0 else 0
     report_text = f"""АНАЛИТИЧЕСКИЙ ОТЧЁТ ПО РЕЗУЛЬТАТАМ АКТУАРНОГО МОДЕЛИРОВАНИЯ
 ================================================================
