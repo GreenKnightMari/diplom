@@ -5,9 +5,6 @@ from scipy.stats import gamma
 import pandas as pd
 import plotly.graph_objects as go
 
-# =====================================================================
-# НАСТРОЙКИ СТРАНИЦЫ
-# =====================================================================
 st.set_page_config(
     page_title="Актуарный анализ катастрофических рисков",
     layout="wide",
@@ -15,252 +12,350 @@ st.set_page_config(
 )
 
 # =====================================================================
-# ЦВЕТОВАЯ ПАЛИТРА (светло-коричневая, профессиональная)
+# ПАЛИТРА — белый фон, тёмный текст, яркие акценты
 # =====================================================================
-# Основной фон:   #F5E6D3 (теплый бежевый)
-# Сайдбар:        #E8D5B7 (более насыщенный беж)
-# Карточки:       #FFFAF0 (кремовый)
-# Основной текст: #2C1810 (тёмно-коричневый, почти чёрный)
-# Заголовки:      #6B3410 (насыщенный коричневый)
-# Модель 1:       #8B4513 (сэддл-браун)
-# Модель 2:       #B8860B (тёмное золото)
-# Границы:        #C9A877 (тёплый тан)
+# Фон:             #FFFFFF
+# Сайдбар:         #F9FAFB
+# Текст основной:  #111827
+# Заголовки:       #1E40AF (глубокий синий)
+# Модель 1:        #2563EB (royal blue)
+# Модель 2:        #DC2626 (vermilion red)
+# Акцент-фиолет:   #7C3AED
+# Акцент-зелёный:  #10B981
+# Акцент-оранж:    #F59E0B
+# Бордюры:         #E5E7EB
 
 st.markdown("""
     <style>
-    /* === Базовый фон и шрифты === */
+    /* =========================================================
+       БАЗОВЫЙ ФОН
+       ========================================================= */
     .stApp {
-        background-color: #F5E6D3;
-        color: #2C1810;
+        background-color: #FFFFFF;
+        color: #111827;
     }
-
-    /* === Сайдбар === */
+    
+    /* =========================================================
+       ВАЖНО: ПРИНУДИТЕЛЬНО БЕЛЫЕ ПОЛЯ ВВОДА
+       (фикс чёрных полос в number_input)
+       ========================================================= */
+    input, 
+    input[type="number"],
+    input[type="text"],
+    .stNumberInput input,
+    .stTextInput input,
+    div[data-baseweb="input"],
+    div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"],
+    div[data-baseweb="base-input"] input {
+        background-color: #FFFFFF !important;
+        color: #111827 !important;
+        -webkit-text-fill-color: #111827 !important;
+        border: 1.5px solid #D1D5DB !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Контейнер number_input */
+    [data-testid="stNumberInputContainer"],
+    [data-testid="stNumberInput"] > div {
+        background-color: #FFFFFF !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Кнопки +/- у number_input */
+    [data-testid="stNumberInput"] button {
+        background-color: #F3F4F6 !important;
+        color: #111827 !important;
+        border: 1px solid #D1D5DB !important;
+    }
+    [data-testid="stNumberInput"] button:hover {
+        background-color: #E5E7EB !important;
+    }
+    
+    /* Фокус полей ввода */
+    input:focus,
+    .stNumberInput input:focus {
+        border-color: #2563EB !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        outline: none !important;
+    }
+    
+    /* =========================================================
+       СЛАЙДЕРЫ — цветной трек
+       ========================================================= */
+    .stSlider [data-baseweb="slider"] > div > div > div {
+        background-color: #2563EB !important;
+    }
+    .stSlider [role="slider"] {
+        background-color: #2563EB !important;
+        border: 3px solid #FFFFFF !important;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4) !important;
+    }
+    
+    /* =========================================================
+       САЙДБАР
+       ========================================================= */
     [data-testid="stSidebar"] {
-        background-color: #E8D5B7;
-        border-right: 3px solid #8B5A2B;
+        background-color: #F9FAFB;
+        border-right: 2px solid #E5E7EB;
     }
     [data-testid="stSidebar"] * {
-        color: #2C1810 !important;
+        color: #111827 !important;
     }
     [data-testid="stSidebar"] label,
     [data-testid="stSidebar"] .stMarkdown p {
-        font-size: 17px !important;
+        font-size: 16px !important;
         font-weight: 600 !important;
-        color: #5D3317 !important;
+        color: #374151 !important;
     }
     [data-testid="stSidebar"] h2 {
         font-size: 26px !important;
-        color: #6B3410 !important;
+        color: #1E40AF !important;
         font-weight: bold !important;
     }
-
-    /* === Заголовки === */
+    
+    /* =========================================================
+       ЗАГОЛОВКИ
+       ========================================================= */
     h1 {
-        color: #6B3410 !important;
+        color: #1E40AF !important;
         font-size: 40px !important;
         font-weight: bold !important;
         text-align: center;
         padding: 15px 0;
-        border-bottom: 3px solid #8B4513;
+        border-bottom: 4px solid #2563EB;
         margin-bottom: 30px !important;
     }
     h2 {
-        color: #6B3410 !important;
+        color: #1E40AF !important;
         font-size: 30px !important;
         font-weight: bold !important;
         margin-top: 25px !important;
     }
     h3 {
-        color: #8B4513 !important;
+        color: #2563EB !important;
         font-size: 24px !important;
         font-weight: 600 !important;
         margin-top: 20px !important;
     }
-
-    /* === Основной текст в markdown === */
+    
+    /* =========================================================
+       ТЕКСТ
+       ========================================================= */
     .stMarkdown p, .stMarkdown li {
         font-size: 19px !important;
         line-height: 1.75 !important;
-        color: #2C1810 !important;
+        color: #1F2937 !important;
     }
     .stMarkdown strong, .stMarkdown b {
-        color: #6B3410 !important;
+        color: #1E40AF !important;
         font-weight: bold !important;
     }
-
-    /* === Вкладки === */
+    
+    /* =========================================================
+       ВКЛАДКИ
+       ========================================================= */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px;
-        background-color: #E8D5B7;
-        padding: 12px;
+        background-color: #F3F4F6;
+        padding: 10px;
         border-radius: 12px;
-        border: 2px solid #8B5A2B;
+        border: 1px solid #E5E7EB;
     }
     .stTabs [data-baseweb="tab"] {
         font-size: 18px !important;
         font-weight: 600 !important;
         padding: 14px 22px !important;
-        background-color: #F5E6D3 !important;
-        color: #5D3317 !important;
+        background-color: #FFFFFF !important;
+        color: #4B5563 !important;
         border-radius: 8px !important;
-        border: 1px solid #C9A877 !important;
+        border: 1px solid #E5E7EB !important;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #8B4513 !important;
-        color: #FFFAF0 !important;
-        border: 1px solid #6B3410 !important;
+        background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
     }
-
-    /* === Карточки результатов === */
+    
+    /* =========================================================
+       КАРТОЧКИ РЕЗУЛЬТАТОВ — цветные тонированные
+       ========================================================= */
     .metric-box-m1 {
-        background-color: #FFFAF0;
-        border-left: 10px solid #8B4513;
+        background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+        border-left: 10px solid #2563EB;
         padding: 28px;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-bottom: 18px;
-        box-shadow: 0 4px 10px rgba(139, 69, 19, 0.18);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
     }
     .metric-box-m2 {
-        background-color: #FFFAF0;
-        border-left: 10px solid #B8860B;
+        background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+        border-left: 10px solid #DC2626;
         padding: 28px;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-bottom: 18px;
-        box-shadow: 0 4px 10px rgba(184, 134, 11, 0.18);
-    }
-    .metric-box-m1 h3, .metric-box-m2 h3 {
-        margin-top: 0 !important;
+        box-shadow: 0 4px 14px rgba(220, 38, 38, 0.15);
     }
     .metric-box-m1 p, .metric-box-m2 p {
         font-size: 20px !important;
         margin: 8px 0 !important;
+        color: #1F2937 !important;
     }
-
-    /* === Информационный блок === */
+    
+    /* =========================================================
+       ИНФО-БЛОКИ
+       ========================================================= */
     .info-block {
-        background-color: #FFF8DC;
+        background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
         padding: 25px;
-        border-radius: 10px;
-        border: 2px solid #B8860B;
+        border-radius: 12px;
+        border-left: 8px solid #F59E0B;
         margin: 25px 0;
-        font-size: 20px !important;
-        color: #2C1810;
-        box-shadow: 0 3px 6px rgba(139, 69, 19, 0.12);
+        font-size: 19px !important;
+        color: #1F2937;
+        box-shadow: 0 3px 10px rgba(245, 158, 11, 0.15);
     }
     .description-block {
-        background-color: #FFFAF0;
+        background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
         padding: 22px;
-        border-radius: 10px;
-        border: 1.5px solid #C9A877;
+        border-radius: 12px;
+        border-left: 6px solid #7C3AED;
         margin: 18px 0;
         font-size: 18px !important;
         line-height: 1.7 !important;
-        color: #2C1810;
+        color: #1F2937;
     }
-
-    /* === БОЛЬШИЕ КНОПКИ === */
+    
+    /* =========================================================
+       БОЛЬШИЕ ЯРКИЕ КНОПКИ
+       ========================================================= */
     .stDownloadButton button, .stButton button {
         font-size: 22px !important;
         padding: 28px 40px !important;
         width: 100% !important;
-        background-color: #8B4513 !important;
-        color: #FFFAF0 !important;
+        color: #FFFFFF !important;
         font-weight: bold !important;
         border-radius: 14px !important;
-        border: 3px solid #6B3410 !important;
-        box-shadow: 0 6px 14px rgba(107, 52, 16, 0.35);
+        border: none !important;
         transition: all 0.25s ease;
         margin: 18px 0 !important;
         min-height: 90px !important;
         letter-spacing: 0.5px;
     }
-    .stDownloadButton button:hover, .stButton button:hover {
-        background-color: #B8860B !important;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(184, 134, 11, 0.45);
-        border-color: #8B4513 !important;
+    
+    /* Первая кнопка — синяя/фиолетовая */
+    .stDownloadButton:nth-of-type(1) button {
+        background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
     }
-
-    /* === Крупная таблица === */
+    .stDownloadButton:nth-of-type(1) button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.5);
+    }
+    
+    /* Вторая кнопка — оранжевая/красная */
+    .stDownloadButton:nth-of-type(2) button {
+        background: linear-gradient(135deg, #F59E0B 0%, #DC2626 100%) !important;
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    }
+    .stDownloadButton:nth-of-type(2) button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(220, 38, 38, 0.5);
+    }
+    
+    /* Общий стиль для st.button */
+    .stButton button {
+        background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+    .stButton button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.5);
+    }
+    
+    /* =========================================================
+       ТАБЛИЦА
+       ========================================================= */
     .custom-table {
         width: 100%;
         border-collapse: collapse;
         margin: 25px 0;
-        font-size: 20px;
+        font-size: 19px;
         text-align: center;
-        box-shadow: 0 4px 10px rgba(107, 52, 16, 0.18);
-        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
         overflow: hidden;
     }
     .custom-table th {
-        background-color: #8B4513;
-        color: #FFFAF0 !important;
+        background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+        color: #FFFFFF !important;
         padding: 18px 14px;
-        border: 1px solid #6B3410;
-        font-size: 20px !important;
+        border: none;
+        font-size: 19px !important;
         font-weight: bold;
     }
     .custom-table td {
         padding: 15px 12px;
-        border: 1px solid #C9A877;
-        background-color: #FFFAF0;
-        color: #2C1810 !important;
-        font-size: 19px !important;
+        border: 1px solid #E5E7EB;
+        background-color: #FFFFFF;
+        color: #111827 !important;
+        font-size: 18px !important;
     }
     .custom-table tr:nth-child(even) td {
-        background-color: #FAF0DC;
+        background-color: #F9FAFB;
     }
     .custom-table tr:hover td {
-        background-color: #F5E6D3;
+        background-color: #EFF6FF;
     }
-
-    /* === Виджеты ввода === */
-    .stNumberInput input,
-    .stSlider [data-baseweb="slider"] {
-        font-size: 17px !important;
-    }
-
-    /* === LaTeX формулы === */
+    
+    /* =========================================================
+       LATEX
+       ========================================================= */
     .katex {
-        font-size: 1.25em !important;
-        color: #2C1810 !important;
+        font-size: 1.2em !important;
+        color: #111827 !important;
     }
-
-    /* === Подписи к виджетам === */
+    
+    /* =========================================================
+       Метки сайдбара
+       ========================================================= */
     .stSlider label, .stNumberInput label {
-        font-size: 17px !important;
+        font-size: 16px !important;
         font-weight: 600 !important;
+        color: #374151 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # =====================================================================
-# НАСТРОЙКИ MATPLOTLIB ПОД СВЕТЛУЮ ТЕМУ
+# MATPLOTLIB — белая тема, яркие линии
 # =====================================================================
 plt.rcParams.update({
-    'axes.facecolor': '#FFFAF0',
-    'figure.facecolor': '#F5E6D3',
-    'grid.color': '#C9A877',
-    'grid.alpha': 0.5,
-    'text.color': '#2C1810',
-    'axes.labelcolor': '#2C1810',
-    'xtick.color': '#2C1810',
-    'ytick.color': '#2C1810',
-    'axes.labelsize': 15,
-    'xtick.labelsize': 13,
-    'ytick.labelsize': 13,
-    'legend.fontsize': 13,
-    'axes.titlesize': 17,
+    'axes.facecolor':   '#FFFFFF',
+    'figure.facecolor': '#FFFFFF',
+    'grid.color':       '#E5E7EB',
+    'grid.alpha':       0.7,
+    'text.color':       '#111827',
+    'axes.labelcolor':  '#111827',
+    'xtick.color':      '#111827',
+    'ytick.color':      '#111827',
+    'axes.labelsize':   15,
+    'xtick.labelsize':  13,
+    'ytick.labelsize':  13,
+    'legend.fontsize':  13,
+    'axes.titlesize':   17,
     'axes.titleweight': 'bold',
-    'axes.edgecolor': '#8B4513',
-    'axes.linewidth': 1.5,
-    'axes.titlecolor': '#6B3410'
+    'axes.edgecolor':   '#9CA3AF',
+    'axes.linewidth':   1.2,
+    'axes.titlecolor':  '#1E40AF',
 })
 
-# Цвета для линий на графиках
-COLOR_M1 = '#8B4513'   # Saddle brown
-COLOR_M2 = '#B8860B'   # Dark goldenrod
-COLOR_REF = '#5D3317'  # Темно-коричневый
+COLOR_M1     = '#2563EB'   # синий
+COLOR_M2     = '#DC2626'   # красный
+COLOR_REF    = '#F59E0B'   # янтарный (для линии надёжности)
+COLOR_ACCENT = '#7C3AED'   # фиолетовый
+COLOR_GREEN  = '#10B981'   # зелёный
 
 # =====================================================================
 # ЗАГОЛОВОК
@@ -275,46 +370,27 @@ st.markdown(
 # =====================================================================
 st.sidebar.markdown("## ⚙️ Параметры портфеля")
 
-N = st.sidebar.number_input(
-    "Число застрахованных объектов N, ед.",
-    value=100, min_value=1
-)
-lam = st.sidebar.number_input(
-    "Интенсивность наступления рисков λ",
-    value=0.01, format="%.3f"
-)
-T = st.sidebar.slider(
-    "Период накопления резерва T, лет",
-    1, 50, 10
-)
-S_vos = st.sidebar.number_input(
-    "Максимальный ущерб S_max, руб.",
-    value=100_000_000, step=1_000_000
-)
-P_gamma = st.sidebar.slider(
-    "Уровень надёжности фонда P",
-    0.800, 0.999, 0.950, step=0.005
-)
-f = st.sidebar.slider(
-    "Доля страховой нагрузки f, %",
-    0, 50, 20
-) / 100
-delta = st.sidebar.slider(
-    "Норма дисконтирования δ",
-    0.0, 0.20, 0.05, step=0.01
-)
+N = st.sidebar.number_input("Число застрахованных объектов N, ед.",
+                            value=100, min_value=1)
+lam = st.sidebar.number_input("Интенсивность наступления рисков λ",
+                              value=0.01, format="%.3f")
+T = st.sidebar.slider("Период накопления резерва T, лет", 1, 50, 10)
+S_vos = st.sidebar.number_input("Максимальный ущерб S_max, руб.",
+                                value=100_000_000, step=1_000_000)
+P_gamma = st.sidebar.slider("Уровень надёжности фонда P",
+                            0.800, 0.999, 0.950, step=0.005)
+f = st.sidebar.slider("Доля страховой нагрузки f, %", 0, 50, 20) / 100
+delta = st.sidebar.slider("Норма дисконтирования δ", 0.0, 0.20, 0.05, step=0.01)
 
 # =====================================================================
-# МАТЕМАТИЧЕСКОЕ ЯДРО
+# МАТЕМАТИЧЕСКОЕ ЯДРО (без изменений)
 # =====================================================================
 m0 = S_vos / 2
 D0 = (S_vos ** 2) / 12
 
 def calc_model(is_disc, temp_T=None, temp_delta=None):
-    """Расчёт параметров одной из моделей."""
     t_val = temp_T if temp_T is not None else T
     d_val = temp_delta if temp_delta is not None else delta
-
     if not is_disc:
         eta = N * lam * t_val
         c1, c2 = eta * m0, eta * (m0**2 + D0)
@@ -325,14 +401,11 @@ def calc_model(is_disc, temp_T=None, temp_delta=None):
         else:
             c1 = N * lam * m0 * (1 - np.exp(-d_val * t_val)) / d_val
             c2 = N * lam * (m0**2 + D0) * (1 - np.exp(-2 * d_val * t_val)) / (2 * d_val)
-
     b = c1 / c2 if c2 != 0 else 1e-10
     a = c1 * b if b != 0 else 1e-10
-
     Pr = gamma.ppf(P_gamma, a=a, scale=1/b) if a > 0 else 0
     Trn = (Pr * 100) / (N * S_vos * t_val) if t_val > 0 else 0
     Trbr = (Trn / (1 - f)) * (np.exp(d_val * t_val) if not is_disc else 1)
-
     return Pr, Trn, Trbr, a, b
 
 r1 = calc_model(False)
@@ -350,36 +423,36 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 1 — СВОДНЫЙ РАСЧЁТ
+# ВКЛАДКА 1
 # ---------------------------------------------------------------------
 with tab1:
     st.markdown("## Результаты сопоставления актуарных моделей")
     st.markdown(
-        "В блоке ниже представлены итоговые значения требуемых "
-        "страховых резервов и расчётных тарифных ставок, полученные по двум "
-        "альтернативным актуарным моделям при заданных параметрах портфеля."
+        "В блоке ниже представлены итоговые значения требуемых страховых резервов "
+        "и расчётных тарифных ставок, полученные по двум альтернативным актуарным "
+        "моделям при заданных параметрах портфеля."
     )
 
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"""
         <div class="metric-box-m1">
-            <h3 style="color:#8B4513;">Модель 1 — без учёта временной стоимости денег</h3>
+            <h3 style="color:#1E40AF; margin-top:0;">Модель 1 — без учёта временной стоимости денег</h3>
             <p>Требуемый размер резервного фонда:<br>
-            <b style="font-size:28px; color:#6B3410;">{r1[0]:,.0f} ₽</b></p>
+            <b style="font-size:30px; color:#2563EB;">{r1[0]:,.0f} ₽</b></p>
             <p>Расчётный брутто-тариф:<br>
-            <b style="font-size:28px; color:#6B3410;">{r1[2]:.4f} %</b></p>
+            <b style="font-size:30px; color:#2563EB;">{r1[2]:.4f} %</b></p>
         </div>
         """, unsafe_allow_html=True)
 
     with col2:
         st.markdown(f"""
         <div class="metric-box-m2">
-            <h3 style="color:#B8860B;">Модель 2 — с учётом инвестиционного дохода</h3>
+            <h3 style="color:#991B1B; margin-top:0;">Модель 2 — с учётом инвестиционного дохода</h3>
             <p>Требуемый размер резервного фонда:<br>
-            <b style="font-size:28px; color:#6B3410;">{r2[0]:,.0f} ₽</b></p>
+            <b style="font-size:30px; color:#DC2626;">{r2[0]:,.0f} ₽</b></p>
             <p>Расчётный брутто-тариф:<br>
-            <b style="font-size:28px; color:#6B3410;">{r2[2]:.4f} %</b></p>
+            <b style="font-size:30px; color:#DC2626;">{r2[2]:.4f} %</b></p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -387,12 +460,12 @@ with tab1:
     st.markdown(f"""
     <div class="info-block">
         💡 <b>Экономическая интерпретация результата.</b><br><br>
-        Учёт временной стоимости капитала (инвестиционного дохода фонда от размещения
-        собранных премий) в Модели 2 позволяет снизить тарифную нагрузку на страхователей
-        на <b style="font-size:24px;">{savings:.2f}%</b> при сохранении заданного
-        уровня финансовой устойчивости фонда <b>{P_gamma*100:.1f}%</b>.
-        Разница объясняется тем, что Модель 2 корректно учитывает доход страховщика
-        от инвестирования временно свободных средств до момента наступления страховых событий.
+        Учёт временной стоимости капитала в Модели 2 позволяет снизить тарифную нагрузку
+        на страхователей на <b style="font-size:26px; color:#10B981;">{savings:.2f}%</b>
+        при сохранении заданного уровня финансовой устойчивости фонда
+        <b>{P_gamma*100:.1f}%</b>. Разница объясняется тем, что Модель 2 корректно
+        учитывает доход страховщика от инвестирования временно свободных средств
+        до момента наступления страховых событий.
     </div>
     """, unsafe_allow_html=True)
 
@@ -409,43 +482,41 @@ with tab1:
              label="Модель 1 — без дисконтирования", color=COLOR_M1, lw=3)
     ax1.plot(x/1e6, gamma.cdf(x, r2[3], scale=1/r2[4]),
              label="Модель 2 — с дисконтированием", color=COLOR_M2, ls="--", lw=3)
-    ax1.axhline(y=P_gamma, color=COLOR_REF, ls=":", lw=2,
+    ax1.axhline(y=P_gamma, color=COLOR_REF, ls=":", lw=2.5,
                 label=f"Уровень надёжности P = {P_gamma}")
-    ax1.axvline(x=r1[0]/1e6, color=COLOR_M1, ls=":", lw=1.5, alpha=0.7)
-    ax1.axvline(x=r2[0]/1e6, color=COLOR_M2, ls=":", lw=1.5, alpha=0.7)
+    ax1.axvline(x=r1[0]/1e6, color=COLOR_M1, ls=":", lw=1.5, alpha=0.6)
+    ax1.axvline(x=r2[0]/1e6, color=COLOR_M2, ls=":", lw=1.5, alpha=0.6)
     ax1.set_xlabel("Совокупный накопленный ущерб, млн руб.")
     ax1.set_ylabel("Вероятность покрытия R(x)")
     ax1.grid(True, alpha=0.4)
     ax1.legend(loc='lower right', framealpha=0.95,
-               facecolor='#FFFAF0', edgecolor='#8B4513')
+               facecolor='#FFFFFF', edgecolor='#E5E7EB')
     st.pyplot(fig1)
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 2 — АНАЛИЗ ЧУВСТВИТЕЛЬНОСТИ
+# ВКЛАДКА 2
 # ---------------------------------------------------------------------
 with tab2:
     st.markdown("## Анализ чувствительности тарифа к ключевым параметрам")
     st.markdown(
         "Графики ниже показывают, как изменяется итоговая величина брутто-тарифа "
-        "при варьировании одного из определяющих параметров с сохранением "
-        "остальных входных значений."
+        "при варьировании одного из определяющих параметров с сохранением остальных "
+        "входных значений."
     )
 
-    # --- График 1: зависимость от срока T ---
     st.markdown("### График 1. Зависимость брутто-тарифа от срока накопления T")
     st.markdown("""
     <div class="description-block">
     <b>Что показывает график.</b> По горизонтальной оси отложен срок действия программы
-    страхования — период, в течение которого формируется резервный фонд. По вертикальной оси —
-    значение брутто-тарифа, выраженное в процентах от страховой суммы.<br><br>
-    <b>Как интерпретировать.</b> Каждая точка кривой отвечает на вопрос:
-    «какой тариф нужен, чтобы покрыть катастрофические убытки за заданное число лет
-    с требуемой надёжностью?». Модель 1 (без учёта инвестиций) демонстрирует
-    практически линейный рост тарифа со временем, поскольку каждый дополнительный год
-    добавляет в портфель новые риски, никак не компенсируемые доходом от размещения средств.
-    Модель 2, напротив, выходит на стабильное плато: сложный процент от инвестирования
-    резервов уравновешивает рост накопленных рисков, обеспечивая стабильность тарифа
-    на длинном горизонте.<br><br>
+    страхования — период, в течение которого формируется резервный фонд. По вертикальной
+    оси — значение брутто-тарифа, выраженное в процентах от страховой суммы.<br><br>
+    <b>Как интерпретировать.</b> Каждая точка кривой отвечает на вопрос: «какой тариф нужен,
+    чтобы покрыть катастрофические убытки за заданное число лет с требуемой надёжностью?».
+    Модель 1 (без учёта инвестиций) демонстрирует практически линейный рост тарифа
+    со временем, поскольку каждый дополнительный год добавляет в портфель новые риски,
+    никак не компенсируемые доходом от размещения средств. Модель 2, напротив, выходит
+    на стабильное плато: сложный процент от инвестирования резервов уравновешивает рост
+    накопленных рисков, обеспечивая стабильность тарифа на длинном горизонте.<br><br>
     <b>Практический вывод.</b> Чем длиннее срок накопления, тем сильнее расхождение
     моделей и тем существеннее экономия для страхователя при использовании Модели 2.
     </div>
@@ -453,39 +524,37 @@ with tab2:
 
     t_array = np.arange(1, 31)
     trbr_m1 = [calc_model(False, temp_T=t)[2] for t in t_array]
-    trbr_m2 = [calc_model(True, temp_T=t)[2] for t in t_array]
+    trbr_m2 = [calc_model(True,  temp_T=t)[2] for t in t_array]
     fig2, ax2 = plt.subplots(figsize=(12, 5.5))
     ax2.plot(t_array, trbr_m1, label="Модель 1 — без дисконтирования",
-             color=COLOR_M1, lw=3, marker='o', markersize=5)
+             color=COLOR_M1, lw=3, marker='o', markersize=6, markerfacecolor='#FFFFFF')
     ax2.plot(t_array, trbr_m2, label="Модель 2 — с дисконтированием",
-             color=COLOR_M2, lw=3, marker='s', markersize=5)
+             color=COLOR_M2, lw=3, marker='s', markersize=6, markerfacecolor='#FFFFFF')
     ax2.set_xlabel("Срок накопления резерва T, лет")
     ax2.set_ylabel("Брутто-тариф, %")
     ax2.grid(True, alpha=0.4)
     ax2.legend(loc='best', framealpha=0.95,
-               facecolor='#FFFAF0', edgecolor='#8B4513')
+               facecolor='#FFFFFF', edgecolor='#E5E7EB')
     st.pyplot(fig2)
 
     st.markdown("---")
-
-    # --- График 2: зависимость от δ ---
     st.markdown("### График 2. Зависимость брутто-тарифа от нормы дисконтирования δ")
     st.markdown(f"""
     <div class="description-block">
     <b>Что такое δ в этом контексте.</b> Параметр δ — это норма доходности, под которую
     страховщик размещает временно свободные средства резервного фонда (банковские
     депозиты, государственные облигации, инвестиционный портфель). Чем выше δ, тем
-    больший доход страховщик получает за время до наступления страховых событий.<br><br>
+    больший доход получает страховщик за время до наступления страховых событий.<br><br>
     <b>Что показывает график.</b> По горизонтальной оси — значение нормы дисконтирования
     в процентах годовых (от 0 % до 18 %). По вертикальной оси — соответствующее значение
     брутто-тарифа Модели 2 при сроке T = {T} лет.<br><br>
     <b>Как интерпретировать.</b> Кривая монотонно убывает: чем выше доходность размещения
-    резервов, тем ниже может быть тарифный взнос, требуемый для обеспечения той же
-    финансовой устойчивости фонда. Это происходит потому, что часть будущих страховых
-    выплат «оплачивается» инвестиционным доходом, а не премиями страхователей.<br><br>
+    резервов, тем ниже может быть тарифный взнос для обеспечения той же финансовой
+    устойчивости фонда. Это происходит потому, что часть будущих страховых выплат
+    «оплачивается» инвестиционным доходом, а не премиями страхователей.<br><br>
     <b>Практический вывод.</b> График позволяет страховой компании оценить, какой объём
-    инвестиционного дохода необходим, чтобы предлагать конкурентоспособный тариф
-    на рынке. Также он показывает чувствительность тарифа к колебаниям рыночных ставок —
+    инвестиционного дохода необходим для предложения конкурентоспособного тарифа
+    на рынке, и показывает чувствительность тарифа к колебаниям рыночных ставок —
     параметр, важный для стресс-тестирования портфеля.
     </div>
     """, unsafe_allow_html=True)
@@ -493,18 +562,19 @@ with tab2:
     d_array = np.linspace(0, 0.18, 30)
     trbr_d2 = [calc_model(True, temp_delta=d)[2] for d in d_array]
     fig3, ax3 = plt.subplots(figsize=(12, 5.5))
-    ax3.plot(d_array * 100, trbr_d2, color=COLOR_M2, lw=3,
-             marker='o', markersize=5, label="Модель 2 — с дисконтированием")
-    ax3.fill_between(d_array * 100, trbr_d2, alpha=0.15, color=COLOR_M2)
+    ax3.plot(d_array * 100, trbr_d2, color=COLOR_ACCENT, lw=3.5,
+             marker='o', markersize=7, markerfacecolor='#FFFFFF',
+             label="Модель 2 — с дисконтированием")
+    ax3.fill_between(d_array * 100, trbr_d2, alpha=0.2, color=COLOR_ACCENT)
     ax3.set_xlabel("Норма дисконтирования δ, % годовых")
     ax3.set_ylabel("Брутто-тариф, %")
     ax3.grid(True, alpha=0.4)
     ax3.legend(loc='best', framealpha=0.95,
-               facecolor='#FFFAF0', edgecolor='#8B4513')
+               facecolor='#FFFFFF', edgecolor='#E5E7EB')
     st.pyplot(fig3)
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 3 — 3D ПОВЕРХНОСТЬ
+# ВКЛАДКА 3 — 3D
 # ---------------------------------------------------------------------
 with tab3:
     st.markdown("## Трёхмерная поверхность тарифных решений")
@@ -514,22 +584,18 @@ with tab3:
     двух ключевых параметров — срока накопления T и нормы дисконтирования δ — на
     итоговую величину брутто-тарифа в Модели 2. Этот график является интегральным
     инструментом для актуария: он позволяет одним взглядом охватить пространство
-    допустимых тарифных решений и выбрать оптимальное сочетание параметров портфеля.<br><br>
-
+    допустимых тарифных решений.<br><br>
     <b>Что отложено на осях:</b><br>
-    • <b>Ось X (горизонтальная вглубь)</b> — срок накопления резерва T, от 5 до 30 лет.<br>
-    • <b>Ось Y (горизонтальная вдоль)</b> — норма дисконтирования δ, от 1 % до 15 % годовых.<br>
-    • <b>Ось Z (вертикальная, высота)</b> — итоговое значение брутто-тарифа в процентах.<br><br>
-
-    <b>Как читать поверхность.</b> Цветовая шкала показывает величину тарифа: тёмные
-    оттенки соответствуют низким (благоприятным) тарифам, светлые — высоким. Возвышенные
-    участки поверхности — это области сочетания параметров, при которых страхование
-    становится дорогим (короткие сроки и низкие ставки доходности). Низменные участки —
-    зоны конкурентоспособных тарифов (длинные сроки и высокие ставки).<br><br>
-
-    <b>Управление графиком.</b> График интерактивный: его можно вращать движением мыши,
-    приближать колесом, выделять область для увеличения. Двойной щелчок возвращает
-    исходный вид. При наведении курсора отображаются точные числовые значения T, δ и тарифа.
+    • <b>Ось X (вглубь)</b> — срок накопления резерва T, от 5 до 30 лет.<br>
+    • <b>Ось Y (вдоль)</b> — норма дисконтирования δ, от 1 % до 15 % годовых.<br>
+    • <b>Ось Z (высота)</b> — итоговое значение брутто-тарифа в процентах.<br><br>
+    <b>Как читать поверхность.</b> Цветовая шкала показывает величину тарифа: холодные
+    оттенки (синий, фиолетовый) соответствуют низким тарифам, тёплые (жёлтый, красный) —
+    высоким. Возвышенные участки — это области сочетания параметров, при которых
+    страхование становится дорогим. Низменные участки — зоны конкурентоспособных тарифов.<br><br>
+    <b>Управление графиком.</b> График интерактивный: вращайте мышью, приближайте колесом,
+    выделяйте область для увеличения. Двойной щелчок возвращает исходный вид. При
+    наведении курсора отображаются точные значения T, δ и тарифа.
     </div>
     """, unsafe_allow_html=True)
 
@@ -544,40 +610,39 @@ with tab3:
     fig_3d = go.Figure(data=[
         go.Surface(
             z=Z, x=T_grid, y=D_grid,
-            colorscale='YlOrBr',
-            reversescale=True,
+            colorscale='Plasma',
             colorbar=dict(
-                title=dict(text="Брутто-тариф, %", font=dict(size=16, color='#2C1810')),
-                tickfont=dict(size=14, color='#2C1810')
+                title=dict(text="Тариф, %", font=dict(size=16, color='#111827')),
+                tickfont=dict(size=14, color='#111827')
             ),
             contours={
                 "z": {"show": True, "start": Z.min(), "end": Z.max(),
-                      "size": (Z.max() - Z.min())/12, "color": "#5D3317"}
+                      "size": (Z.max() - Z.min())/12, "color": "#1E40AF"}
             }
         )
     ])
     fig_3d.update_layout(
         scene=dict(
             xaxis=dict(
-                title=dict(text='Срок T, лет', font=dict(size=16, color='#2C1810')),
-                tickfont=dict(size=13, color='#2C1810'),
-                backgroundcolor='#FFFAF0', gridcolor='#C9A877'
+                title=dict(text='Срок T, лет', font=dict(size=16, color='#111827')),
+                tickfont=dict(size=13, color='#111827'),
+                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
             ),
             yaxis=dict(
-                title=dict(text='Ставка δ', font=dict(size=16, color='#2C1810')),
-                tickfont=dict(size=13, color='#2C1810'),
-                backgroundcolor='#FFFAF0', gridcolor='#C9A877'
+                title=dict(text='Ставка δ', font=dict(size=16, color='#111827')),
+                tickfont=dict(size=13, color='#111827'),
+                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
             ),
             zaxis=dict(
-                title=dict(text='Тариф, %', font=dict(size=16, color='#2C1810')),
-                tickfont=dict(size=13, color='#2C1810'),
-                backgroundcolor='#FFFAF0', gridcolor='#C9A877'
+                title=dict(text='Тариф, %', font=dict(size=16, color='#111827')),
+                tickfont=dict(size=13, color='#111827'),
+                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
             ),
             camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
         ),
         height=850,
-        paper_bgcolor='#F5E6D3',
-        font=dict(color='#2C1810', size=14),
+        paper_bgcolor='#FFFFFF',
+        font=dict(color='#111827', size=14),
         margin=dict(l=10, r=10, b=10, t=30)
     )
     st.plotly_chart(fig_3d, use_container_width=True)
@@ -587,15 +652,17 @@ with tab3:
     st.markdown(f"""
     <div class="info-block">
     📍 <b>Экстремумы поверхности.</b><br><br>
-    <b>Минимальный тариф</b> на исследованной области: <b>{Z.min():.4f}%</b><br>
+    <b style="color:#10B981;">Минимальный тариф</b> на исследованной области:
+    <b style="font-size:24px;">{Z.min():.4f}%</b><br>
     достигается при T = {T_grid[z_min_idx]:.1f} лет, δ = {D_grid[z_min_idx]*100:.1f}%<br><br>
-    <b>Максимальный тариф</b> на исследованной области: <b>{Z.max():.4f}%</b><br>
+    <b style="color:#DC2626;">Максимальный тариф</b> на исследованной области:
+    <b style="font-size:24px;">{Z.max():.4f}%</b><br>
     достигается при T = {T_grid[z_max_idx]:.1f} лет, δ = {D_grid[z_max_idx]*100:.1f}%
     </div>
     """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 4 — МЕТОДОЛОГИЯ (расширенная)
+# ВКЛАДКА 4 — МЕТОДОЛОГИЯ
 # ---------------------------------------------------------------------
 with tab4:
     st.markdown("## Методологическое описание программного комплекса")
@@ -645,13 +712,13 @@ with tab4:
     st.markdown("""
     | Параметр | Обозначение | Содержательный смысл |
     |---|---|---|
-    | Число застрахованных объектов | N | Количество однородных предприятий, объединённых в один портфель |
-    | Интенсивность рисков | λ | Среднее число катастрофических событий на один объект в год |
-    | Период накопления | T | Длительность интервала, на котором формируется фонд |
-    | Максимальный ущерб | S_max | Восстановительная стоимость объекта при полной гибели |
-    | Уровень надёжности | P | Вероятность, с которой фонд покрывает все возможные выплаты |
-    | Доля нагрузки | f | Доля брутто-премии, идущая на покрытие расходов страховщика |
-    | Норма дисконтирования | δ | Непрерывная ставка доходности размещения средств фонда |
+    | Число застрахованных объектов | N | Количество однородных предприятий в портфеле |
+    | Интенсивность рисков | λ | Среднее число событий на один объект в год |
+    | Период накопления | T | Длительность интервала формирования фонда |
+    | Максимальный ущерб | S_max | Восстановительная стоимость при полной гибели |
+    | Уровень надёжности | P | Вероятность полного покрытия выплат |
+    | Доля нагрузки | f | Доля брутто-премии на расходы страховщика |
+    | Норма дисконтирования | δ | Ставка доходности размещения средств фонда |
     """)
 
     st.markdown("### 4. Математическая модель совокупного ущерба")
@@ -665,7 +732,6 @@ with tab4:
 
     **Модель 1.** Финансовые потоки не приводятся к единому моменту времени;
     взносы и выплаты считаются равноценными независимо от их временной локализации.
-    Семиинварианты:
     """)
     st.latex(r"\chi_1 = N \lambda T \, m_0")
     st.latex(r"\chi_2 = N \lambda T \, (m_0^2 + D_0)")
@@ -673,7 +739,7 @@ with tab4:
     st.markdown("""
     **Модель 2.** Финансовые потоки приводятся к начальному моменту времени операцией
     непрерывного дисконтирования с нормой δ. Это позволяет учесть инвестиционный
-    доход от размещения временно свободных средств фонда. Семиинварианты:
+    доход от размещения временно свободных средств фонда.
     """)
     st.latex(r"\chi_1 = N \lambda m_0 \cdot \frac{1 - e^{-\delta T}}{\delta}")
     st.latex(r"\chi_2 = N \lambda (m_0^2 + D_0) \cdot \frac{1 - e^{-2\delta T}}{2\delta}")
@@ -683,7 +749,7 @@ with tab4:
 
     st.markdown("### 5. Алгоритм расчёта тарифной ставки")
     st.markdown("""
-    Расчёт выполняется в четыре последовательных этапа:
+    Расчёт выполняется в четыре последовательных этапа.
 
     **Этап 1. Определение требуемого размера фонда.** На основе функции распределения
     совокупного ущерба вычисляется квантиль уровня доверия P. Эта величина соответствует
@@ -691,21 +757,18 @@ with tab4:
     убытков с заданной вероятностью.
 
     **Этап 2. Расчёт нетто-ставки.** Размер фонда равномерно распределяется между всеми
-    участниками портфеля и годами действия программы:
+    участниками портфеля и годами действия программы.
     """)
     st.latex(r"Tr_n = \frac{P_r \cdot 100\%}{N \cdot S_{max} \cdot T}")
-
     st.markdown("""
     **Этап 3. Расчёт брутто-ставки.** К нетто-ставке добавляется страховая нагрузка f,
-    покрывающая операционные расходы страховой компании и прибыль:
+    покрывающая операционные расходы страховой компании и прибыль.
     """)
     st.latex(r"Tr_{br} = \frac{Tr_n}{1 - f}")
-
     st.markdown("""
     **Этап 4. Корректировка для Модели 1.** В классической модели применяется
     повышающий коэффициент $e^{\delta T}$, отражающий обесценение собранных премий
-    относительно момента наступления страховых выплат. Эта корректировка позволяет
-    привести базовые тарифы двух моделей к сопоставимому виду.
+    относительно момента наступления страховых выплат.
     """)
 
     st.markdown("### 6. Интерпретация результатов")
@@ -720,12 +783,7 @@ with tab4:
     портфеля должны вносить ежегодные премии в фонд.
 
     • **Разница тарифов между моделями** — количественная оценка экономического эффекта
-    от корректного учёта временной стоимости денег. На длинных горизонтах эта разница
-    может достигать десятков процентов.
-
-    Сопоставление двух моделей позволяет страховщику обоснованно выбрать тарифную
-    политику и продемонстрировать страхователю экономическую целесообразность
-    долгосрочных программ страхования.
+    от корректного учёта временной стоимости денег.
     """)
 
     st.markdown("### 7. Ограничения и допущения модели")
@@ -747,7 +805,7 @@ with tab4:
     """)
 
 # ---------------------------------------------------------------------
-# ВКЛАДКА 5 — ОТЧЁТЫ И ДАННЫЕ
+# ВКЛАДКА 5 — ОТЧЁТЫ
 # ---------------------------------------------------------------------
 with tab5:
     st.markdown("## Матрица плановых показателей по годам")
@@ -761,7 +819,7 @@ with tab5:
         res1_t = calc_model(False, temp_T=t_step)
         res2_t = calc_model(True,  temp_T=t_step)
         data.append({
-            "Год (T)": t_step,
+            "Год (T)":        t_step,
             "Фонд М1, руб.":  f"{res1_t[0]:,.0f}",
             "Фонд М2, руб.":  f"{res2_t[0]:,.0f}",
             "Тариф М1, %":    f"{res1_t[2]:.4f}",
@@ -786,7 +844,7 @@ with tab5:
     st.markdown("## 📥 Экспорт результатов расчёта")
     st.markdown(
         "Используйте кнопки ниже для выгрузки результатов в форматах CSV "
-        "(для импорта в Excel или СУБД) и текстового отчёта (для включения в аналитические записки)."
+        "(для импорта в Excel или СУБД) и текстового отчёта."
     )
 
     csv_data = pd.DataFrame([{
