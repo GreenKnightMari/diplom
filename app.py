@@ -28,61 +28,65 @@ st.set_page_config(
 st.markdown("""
     <style>
     /* =========================================================
+       ВЕРХНИЙ HEADER STREAMLIT — голубой/синий градиент
+       ========================================================= */
+    header[data-testid="stHeader"] {
+        background: linear-gradient(90deg, #2563EB 0%, #3B82F6 50%, #06B6D4 100%) !important;
+        height: 60px !important;
+        border-bottom: 3px solid #1E40AF;
+    }
+    header[data-testid="stHeader"] *,
+    header[data-testid="stHeader"] button,
+    header[data-testid="stHeader"] svg {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+    }
+    /* Контент сдвигаем чуть ниже из-за более крупного хедера */
+    .main .block-container {
+        padding-top: 3rem;
+    }
+    
+    /* =========================================================
        БАЗОВЫЙ ФОН
        ========================================================= */
     .stApp {
         background-color: #FFFFFF;
         color: #111827;
+        font-size: 22px;
     }
     
     /* =========================================================
-       ВАЖНО: ПРИНУДИТЕЛЬНО БЕЛЫЕ ПОЛЯ ВВОДА
-       (фикс чёрных полос в number_input)
+       БЕЛЫЕ ПОЛЯ ВВОДА (фикс чёрных полос)
        ========================================================= */
-    input, 
-    input[type="number"],
-    input[type="text"],
-    .stNumberInput input,
-    .stTextInput input,
-    div[data-baseweb="input"],
-    div[data-baseweb="input"] input,
-    div[data-baseweb="base-input"],
-    div[data-baseweb="base-input"] input {
+    input, input[type="number"], input[type="text"],
+    .stNumberInput input, .stTextInput input,
+    div[data-baseweb="input"], div[data-baseweb="input"] input,
+    div[data-baseweb="base-input"], div[data-baseweb="base-input"] input {
         background-color: #FFFFFF !important;
         color: #111827 !important;
         -webkit-text-fill-color: #111827 !important;
         border: 1.5px solid #D1D5DB !important;
         border-radius: 8px !important;
-        font-size: 16px !important;
+        font-size: 18px !important;
     }
-    
-    /* Контейнер number_input */
     [data-testid="stNumberInputContainer"],
     [data-testid="stNumberInput"] > div {
         background-color: #FFFFFF !important;
         border-radius: 8px !important;
     }
-    
-    /* Кнопки +/- у number_input */
     [data-testid="stNumberInput"] button {
         background-color: #F3F4F6 !important;
         color: #111827 !important;
         border: 1px solid #D1D5DB !important;
     }
-    [data-testid="stNumberInput"] button:hover {
-        background-color: #E5E7EB !important;
-    }
-    
-    /* Фокус полей ввода */
-    input:focus,
-    .stNumberInput input:focus {
+    input:focus, .stNumberInput input:focus {
         border-color: #2563EB !important;
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
         outline: none !important;
     }
     
     /* =========================================================
-       СЛАЙДЕРЫ — цветной трек
+       СЛАЙДЕРЫ
        ========================================================= */
     .stSlider [data-baseweb="slider"] > div > div > div {
         background-color: #2563EB !important;
@@ -90,11 +94,18 @@ st.markdown("""
     .stSlider [role="slider"] {
         background-color: #2563EB !important;
         border: 3px solid #FFFFFF !important;
-        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4) !important;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.5) !important;
+        width: 22px !important;
+        height: 22px !important;
+    }
+    .stSlider [data-baseweb="slider"] div div span {
+        font-size: 18px !important;
+        color: #2563EB !important;
+        font-weight: bold !important;
     }
     
     /* =========================================================
-       САЙДБАР
+       САЙДБАР — КРУПНЫЕ ШРИФТЫ
        ========================================================= */
     [data-testid="stSidebar"] {
         background-color: #F9FAFB;
@@ -105,47 +116,47 @@ st.markdown("""
     }
     [data-testid="stSidebar"] label,
     [data-testid="stSidebar"] .stMarkdown p {
-        font-size: 16px !important;
+        font-size: 19px !important;
         font-weight: 600 !important;
         color: #374151 !important;
     }
     [data-testid="stSidebar"] h2 {
-        font-size: 26px !important;
+        font-size: 32px !important;
         color: #1E40AF !important;
         font-weight: bold !important;
     }
     
     /* =========================================================
-       ЗАГОЛОВКИ
+       ЗАГОЛОВКИ — БОЛЬШЕ
        ========================================================= */
     h1 {
         color: #1E40AF !important;
-        font-size: 40px !important;
+        font-size: 46px !important;
         font-weight: bold !important;
         text-align: center;
-        padding: 15px 0;
+        padding: 18px 0;
         border-bottom: 4px solid #2563EB;
-        margin-bottom: 30px !important;
+        margin-bottom: 35px !important;
     }
     h2 {
         color: #1E40AF !important;
-        font-size: 30px !important;
+        font-size: 36px !important;
         font-weight: bold !important;
-        margin-top: 25px !important;
+        margin-top: 30px !important;
     }
     h3 {
         color: #2563EB !important;
-        font-size: 24px !important;
+        font-size: 28px !important;
         font-weight: 600 !important;
-        margin-top: 20px !important;
+        margin-top: 25px !important;
     }
     
     /* =========================================================
-       ТЕКСТ
+       ОСНОВНОЙ ТЕКСТ — БОЛЬШЕ
        ========================================================= */
     .stMarkdown p, .stMarkdown li {
-        font-size: 19px !important;
-        line-height: 1.75 !important;
+        font-size: 22px !important;
+        line-height: 1.8 !important;
         color: #1F2937 !important;
     }
     .stMarkdown strong, .stMarkdown b {
@@ -153,20 +164,35 @@ st.markdown("""
         font-weight: bold !important;
     }
     
+    /* Таблицы из markdown */
+    .stMarkdown table {
+        font-size: 20px !important;
+    }
+    .stMarkdown table th {
+        background-color: #2563EB !important;
+        color: #FFFFFF !important;
+        font-size: 20px !important;
+        padding: 14px !important;
+    }
+    .stMarkdown table td {
+        padding: 12px !important;
+        font-size: 19px !important;
+    }
+    
     /* =========================================================
-       ВКЛАДКИ
+       ВКЛАДКИ — КРУПНЫЕ
        ========================================================= */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 6px;
+        gap: 8px;
         background-color: #F3F4F6;
-        padding: 10px;
+        padding: 14px;
         border-radius: 12px;
         border: 1px solid #E5E7EB;
     }
     .stTabs [data-baseweb="tab"] {
-        font-size: 18px !important;
+        font-size: 21px !important;
         font-weight: 600 !important;
-        padding: 14px 22px !important;
+        padding: 18px 28px !important;
         background-color: #FFFFFF !important;
         color: #4B5563 !important;
         border-radius: 8px !important;
@@ -179,27 +205,27 @@ st.markdown("""
     }
     
     /* =========================================================
-       КАРТОЧКИ РЕЗУЛЬТАТОВ — цветные тонированные
+       КАРТОЧКИ РЕЗУЛЬТАТОВ
        ========================================================= */
     .metric-box-m1 {
         background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
         border-left: 10px solid #2563EB;
-        padding: 28px;
-        border-radius: 12px;
-        margin-bottom: 18px;
+        padding: 32px;
+        border-radius: 14px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
     }
     .metric-box-m2 {
         background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
         border-left: 10px solid #DC2626;
-        padding: 28px;
-        border-radius: 12px;
-        margin-bottom: 18px;
+        padding: 32px;
+        border-radius: 14px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 14px rgba(220, 38, 38, 0.15);
     }
     .metric-box-m1 p, .metric-box-m2 p {
-        font-size: 20px !important;
-        margin: 8px 0 !important;
+        font-size: 22px !important;
+        margin: 10px 0 !important;
         color: #1F2937 !important;
     }
     
@@ -208,43 +234,41 @@ st.markdown("""
        ========================================================= */
     .info-block {
         background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-        padding: 25px;
-        border-radius: 12px;
+        padding: 28px;
+        border-radius: 14px;
         border-left: 8px solid #F59E0B;
-        margin: 25px 0;
-        font-size: 19px !important;
+        margin: 28px 0;
+        font-size: 22px !important;
         color: #1F2937;
         box-shadow: 0 3px 10px rgba(245, 158, 11, 0.15);
     }
     .description-block {
         background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
-        padding: 22px;
-        border-radius: 12px;
+        padding: 26px;
+        border-radius: 14px;
         border-left: 6px solid #7C3AED;
-        margin: 18px 0;
-        font-size: 18px !important;
-        line-height: 1.7 !important;
+        margin: 20px 0;
+        font-size: 21px !important;
+        line-height: 1.75 !important;
         color: #1F2937;
     }
     
     /* =========================================================
-       БОЛЬШИЕ ЯРКИЕ КНОПКИ
+       КНОПКИ
        ========================================================= */
     .stDownloadButton button, .stButton button {
-        font-size: 22px !important;
-        padding: 28px 40px !important;
+        font-size: 25px !important;
+        padding: 30px 40px !important;
         width: 100% !important;
         color: #FFFFFF !important;
         font-weight: bold !important;
         border-radius: 14px !important;
         border: none !important;
         transition: all 0.25s ease;
-        margin: 18px 0 !important;
-        min-height: 90px !important;
+        margin: 20px 0 !important;
+        min-height: 100px !important;
         letter-spacing: 0.5px;
     }
-    
-    /* Первая кнопка — синяя/фиолетовая */
     .stDownloadButton:nth-of-type(1) button {
         background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
         box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
@@ -253,8 +277,6 @@ st.markdown("""
         transform: translateY(-3px);
         box-shadow: 0 10px 24px rgba(124, 58, 237, 0.5);
     }
-    
-    /* Вторая кнопка — оранжевая/красная */
     .stDownloadButton:nth-of-type(2) button {
         background: linear-gradient(135deg, #F59E0B 0%, #DC2626 100%) !important;
         box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
@@ -263,15 +285,9 @@ st.markdown("""
         transform: translateY(-3px);
         box-shadow: 0 10px 24px rgba(220, 38, 38, 0.5);
     }
-    
-    /* Общий стиль для st.button */
     .stButton button {
         background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important;
         box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-    }
-    .stButton button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.5);
     }
     
     /* =========================================================
@@ -280,8 +296,8 @@ st.markdown("""
     .custom-table {
         width: 100%;
         border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 19px;
+        margin: 28px 0;
+        font-size: 21px;
         text-align: center;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
         border-radius: 12px;
@@ -290,17 +306,17 @@ st.markdown("""
     .custom-table th {
         background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
         color: #FFFFFF !important;
-        padding: 18px 14px;
+        padding: 22px 16px;
         border: none;
-        font-size: 19px !important;
+        font-size: 22px !important;
         font-weight: bold;
     }
     .custom-table td {
-        padding: 15px 12px;
+        padding: 18px 14px;
         border: 1px solid #E5E7EB;
         background-color: #FFFFFF;
         color: #111827 !important;
-        font-size: 18px !important;
+        font-size: 20px !important;
     }
     .custom-table tr:nth-child(even) td {
         background-color: #F9FAFB;
@@ -310,18 +326,14 @@ st.markdown("""
     }
     
     /* =========================================================
-       LATEX
+       LATEX И ПРОЧЕЕ
        ========================================================= */
     .katex {
-        font-size: 1.2em !important;
+        font-size: 1.4em !important;
         color: #111827 !important;
     }
-    
-    /* =========================================================
-       Метки сайдбара
-       ========================================================= */
     .stSlider label, .stNumberInput label {
-        font-size: 16px !important;
+        font-size: 19px !important;
         font-weight: 600 !important;
         color: #374151 !important;
     }
@@ -340,22 +352,17 @@ plt.rcParams.update({
     'axes.labelcolor':  '#111827',
     'xtick.color':      '#111827',
     'ytick.color':      '#111827',
-    'axes.labelsize':   15,
-    'xtick.labelsize':  13,
-    'ytick.labelsize':  13,
-    'legend.fontsize':  13,
-    'axes.titlesize':   17,
+    'axes.labelsize':   20,      # подписи осей
+    'xtick.labelsize':  17,      # значения на оси X
+    'ytick.labelsize':  17,      # значения на оси Y
+    'legend.fontsize':  17,      # легенда
+    'axes.titlesize':   22,      # заголовок графика
     'axes.titleweight': 'bold',
     'axes.edgecolor':   '#9CA3AF',
-    'axes.linewidth':   1.2,
+    'axes.linewidth':   1.5,
     'axes.titlecolor':  '#1E40AF',
+    'figure.dpi':       110,     # повышенная чёткость
 })
-
-COLOR_M1     = '#2563EB'   # синий
-COLOR_M2     = '#DC2626'   # красный
-COLOR_REF    = '#F59E0B'   # янтарный (для линии надёжности)
-COLOR_ACCENT = '#7C3AED'   # фиолетовый
-COLOR_GREEN  = '#10B981'   # зелёный
 
 # =====================================================================
 # ЗАГОЛОВОК
@@ -607,44 +614,46 @@ with tab3:
         for j in range(T_grid.shape[1]):
             Z[i, j] = calc_model(True, temp_T=T_grid[i, j], temp_delta=D_grid[i, j])[2]
 
-    fig_3d = go.Figure(data=[
-        go.Surface(
-            z=Z, x=T_grid, y=D_grid,
-            colorscale='Plasma',
-            colorbar=dict(
-                title=dict(text="Тариф, %", font=dict(size=16, color='#111827')),
-                tickfont=dict(size=14, color='#111827')
-            ),
-            contours={
-                "z": {"show": True, "start": Z.min(), "end": Z.max(),
-                      "size": (Z.max() - Z.min())/12, "color": "#1E40AF"}
-            }
-        )
-    ])
-    fig_3d.update_layout(
-        scene=dict(
-            xaxis=dict(
-                title=dict(text='Срок T, лет', font=dict(size=16, color='#111827')),
-                tickfont=dict(size=13, color='#111827'),
-                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
-            ),
-            yaxis=dict(
-                title=dict(text='Ставка δ', font=dict(size=16, color='#111827')),
-                tickfont=dict(size=13, color='#111827'),
-                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
-            ),
-            zaxis=dict(
-                title=dict(text='Тариф, %', font=dict(size=16, color='#111827')),
-                tickfont=dict(size=13, color='#111827'),
-                backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
-            ),
-            camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
+   fig_3d = go.Figure(data=[
+    go.Surface(
+        z=Z, x=T_grid, y=D_grid,
+        colorscale='Plasma',
+        colorbar=dict(
+            title=dict(text="Тариф, %", font=dict(size=20, color='#111827')),
+            tickfont=dict(size=16, color='#111827'),
+            thickness=25,
+            len=0.75
         ),
-        height=850,
-        paper_bgcolor='#FFFFFF',
-        font=dict(color='#111827', size=14),
-        margin=dict(l=10, r=10, b=10, t=30)
+        contours={
+            "z": {"show": True, "start": Z.min(), "end": Z.max(),
+                  "size": (Z.max() - Z.min())/12, "color": "#1E40AF"}
+        }
     )
+])
+   fig_3d.update_layout(
+    scene=dict(
+        xaxis=dict(
+            title=dict(text='Срок T, лет', font=dict(size=22, color='#111827')),
+            tickfont=dict(size=17, color='#111827'),
+            backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
+        ),
+        yaxis=dict(
+            title=dict(text='Ставка δ', font=dict(size=22, color='#111827')),
+            tickfont=dict(size=17, color='#111827'),
+            backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
+        ),
+        zaxis=dict(
+            title=dict(text='Тариф, %', font=dict(size=22, color='#111827')),
+            tickfont=dict(size=17, color='#111827'),
+            backgroundcolor='#FFFFFF', gridcolor='#E5E7EB'
+        ),
+        camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
+    ),
+    height=900,
+    paper_bgcolor='#FFFFFF',
+    font=dict(color='#111827', size=18),
+    margin=dict(l=10, r=10, b=10, t=40)
+)
     st.plotly_chart(fig_3d, use_container_width=True)
 
     z_min_idx = np.unravel_index(np.argmin(Z), Z.shape)
