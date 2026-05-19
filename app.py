@@ -5,342 +5,771 @@ from scipy.stats import gamma
 import pandas as pd
 import plotly.graph_objects as go
 
-# --- НАСТРОЙКИ СТРАНИЦЫ ---
-st.set_page_config(page_title="Анализ катастрофических рисков", layout="wide", page_icon="🛡️")
+# =====================================================================
+# НАСТРОЙКИ СТРАНИЦЫ
+# =====================================================================
+st.set_page_config(
+    page_title="Актуарный анализ катастрофических рисков",
+    layout="wide",
+    page_icon="🛡️"
+)
 
-# --- ГЛОБАЛЬНЫЙ ИНЖЕКТ CSS ДЛЯ КРУПНЫХ ШРИФТОВ И ДИЗАЙНА ---
+# =====================================================================
+# ЦВЕТОВАЯ ПАЛИТРА (светло-коричневая, профессиональная)
+# =====================================================================
+# Основной фон:   #F5E6D3 (теплый бежевый)
+# Сайдбар:        #E8D5B7 (более насыщенный беж)
+# Карточки:       #FFFAF0 (кремовый)
+# Основной текст: #2C1810 (тёмно-коричневый, почти чёрный)
+# Заголовки:      #6B3410 (насыщенный коричневый)
+# Модель 1:       #8B4513 (сэддл-браун)
+# Модель 2:       #B8860B (тёмное золото)
+# Границы:        #C9A877 (тёплый тан)
+
 st.markdown("""
     <style>
-    /* Глубокий темно-синий фон и увеличение базового шрифта */
+    /* === Базовый фон и шрифты === */
     .stApp {
-        background-color: #031326;
-        color: #E2E8F0;
-        font-size: 18px !important;
+        background-color: #F5E6D3;
+        color: #2C1810;
     }
-    /* Увеличение текста в боковой панели */
+
+    /* === Сайдбар === */
     [data-testid="stSidebar"] {
-        background-color: #0B1E36;
-        border-right: 1px solid #1E3A5F;
+        background-color: #E8D5B7;
+        border-right: 3px solid #8B5A2B;
     }
-    [data-testid="stSidebar"] .stMarkdown p, [data-testid="stSidebar"] label {
-        font-size: 16px !important;
-        font-weight: 500 !important;
+    [data-testid="stSidebar"] * {
+        color: #2C1810 !important;
     }
-    /* Стилизация заголовков */
-    h1 { color: #38BDF8 !important; font-size: 36px !important; font-weight: bold !important; text-align: center; margin-bottom: 25px; }
-    h2 { color: #38BDF8 !important; font-size: 28px !important; margin-top: 20px; }
-    h3 { color: #64FFDA !important; font-size: 22px !important; margin-top: 15px; }
-    
-    /* Увеличение обычного текста во вкладках */
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stMarkdown p {
+        font-size: 17px !important;
+        font-weight: 600 !important;
+        color: #5D3317 !important;
+    }
+    [data-testid="stSidebar"] h2 {
+        font-size: 26px !important;
+        color: #6B3410 !important;
+        font-weight: bold !important;
+    }
+
+    /* === Заголовки === */
+    h1 {
+        color: #6B3410 !important;
+        font-size: 40px !important;
+        font-weight: bold !important;
+        text-align: center;
+        padding: 15px 0;
+        border-bottom: 3px solid #8B4513;
+        margin-bottom: 30px !important;
+    }
+    h2 {
+        color: #6B3410 !important;
+        font-size: 30px !important;
+        font-weight: bold !important;
+        margin-top: 25px !important;
+    }
+    h3 {
+        color: #8B4513 !important;
+        font-size: 24px !important;
+        font-weight: 600 !important;
+        margin-top: 20px !important;
+    }
+
+    /* === Основной текст в markdown === */
     .stMarkdown p, .stMarkdown li {
-        font-size: 18px !important;
-        line-height: 1.6 !important;
+        font-size: 19px !important;
+        line-height: 1.75 !important;
+        color: #2C1810 !important;
     }
-    
-    /* Огромные и заметные блоки результатов */
+    .stMarkdown strong, .stMarkdown b {
+        color: #6B3410 !important;
+        font-weight: bold !important;
+    }
+
+    /* === Вкладки === */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 6px;
+        background-color: #E8D5B7;
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid #8B5A2B;
+    }
+    .stTabs [data-baseweb="tab"] {
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        padding: 14px 22px !important;
+        background-color: #F5E6D3 !important;
+        color: #5D3317 !important;
+        border-radius: 8px !important;
+        border: 1px solid #C9A877 !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #8B4513 !important;
+        color: #FFFAF0 !important;
+        border: 1px solid #6B3410 !important;
+    }
+
+    /* === Карточки результатов === */
     .metric-box-m1 {
-        background-color: #0B1E36;
-        border-left: 6px solid #38BDF8;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 15px;
+        background-color: #FFFAF0;
+        border-left: 10px solid #8B4513;
+        padding: 28px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 10px rgba(139, 69, 19, 0.18);
     }
     .metric-box-m2 {
-        background-color: #0B1E36;
-        border-left: 6px solid #64FFDA;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 15px;
+        background-color: #FFFAF0;
+        border-left: 10px solid #B8860B;
+        padding: 28px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 10px rgba(184, 134, 11, 0.18);
     }
-    
-    /* ОГРОМНЫЕ ЯРКИЕ КНОПКИ СКАЧИВАНИЯ */
-    .stButton button {
+    .metric-box-m1 h3, .metric-box-m2 h3 {
+        margin-top: 0 !important;
+    }
+    .metric-box-m1 p, .metric-box-m2 p {
         font-size: 20px !important;
-        padding: 15px 30px !important;
+        margin: 8px 0 !important;
+    }
+
+    /* === Информационный блок === */
+    .info-block {
+        background-color: #FFF8DC;
+        padding: 25px;
+        border-radius: 10px;
+        border: 2px solid #B8860B;
+        margin: 25px 0;
+        font-size: 20px !important;
+        color: #2C1810;
+        box-shadow: 0 3px 6px rgba(139, 69, 19, 0.12);
+    }
+    .description-block {
+        background-color: #FFFAF0;
+        padding: 22px;
+        border-radius: 10px;
+        border: 1.5px solid #C9A877;
+        margin: 18px 0;
+        font-size: 18px !important;
+        line-height: 1.7 !important;
+        color: #2C1810;
+    }
+
+    /* === БОЛЬШИЕ КНОПКИ === */
+    .stDownloadButton button, .stButton button {
+        font-size: 22px !important;
+        padding: 28px 40px !important;
         width: 100% !important;
-        background-color: #38BDF8 !important;
-        color: #031326 !important;
+        background-color: #8B4513 !important;
+        color: #FFFAF0 !important;
         font-weight: bold !important;
-        border-radius: 8px !important;
-        border: none !important;
-        box-shadow: 0 4px 6px rgba(56, 189, 248, 0.2);
-        transition: all 0.3s ease;
-        margin-top: 15px;
+        border-radius: 14px !important;
+        border: 3px solid #6B3410 !important;
+        box-shadow: 0 6px 14px rgba(107, 52, 16, 0.35);
+        transition: all 0.25s ease;
+        margin: 18px 0 !important;
+        min-height: 90px !important;
+        letter-spacing: 0.5px;
     }
-    .stButton button:hover {
-        background-color: #64FFDA !important;
-        box-shadow: 0 6px 12px rgba(100, 255, 218, 0.4);
-        transform: translateY(-2px);
+    .stDownloadButton button:hover, .stButton button:hover {
+        background-color: #B8860B !important;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(184, 134, 11, 0.45);
+        border-color: #8B4513 !important;
     }
-    
-    /* Крупная кастомная таблица данных */
+
+    /* === Крупная таблица === */
     .custom-table {
         width: 100%;
         border-collapse: collapse;
-        margin: 20px 0;
-        font-size: 18px;
-        text-align: left;
+        margin: 25px 0;
+        font-size: 20px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(107, 52, 16, 0.18);
+        border-radius: 10px;
+        overflow: hidden;
     }
     .custom-table th {
-        background-color: #1E3A5F;
-        color: #64FFDA;
-        padding: 12px;
-        border: 1px solid #233554;
+        background-color: #8B4513;
+        color: #FFFAF0 !important;
+        padding: 18px 14px;
+        border: 1px solid #6B3410;
+        font-size: 20px !important;
+        font-weight: bold;
     }
     .custom-table td {
-        padding: 12px;
-        border: 1px solid #233554;
-        background-color: #0B1E36;
+        padding: 15px 12px;
+        border: 1px solid #C9A877;
+        background-color: #FFFAF0;
+        color: #2C1810 !important;
+        font-size: 19px !important;
+    }
+    .custom-table tr:nth-child(even) td {
+        background-color: #FAF0DC;
     }
     .custom-table tr:hover td {
-        background-color: #112240;
+        background-color: #F5E6D3;
+    }
+
+    /* === Виджеты ввода === */
+    .stNumberInput input,
+    .stSlider [data-baseweb="slider"] {
+        font-size: 17px !important;
+    }
+
+    /* === LaTeX формулы === */
+    .katex {
+        font-size: 1.25em !important;
+        color: #2C1810 !important;
+    }
+
+    /* === Подписи к виджетам === */
+    .stSlider label, .stNumberInput label {
+        font-size: 17px !important;
+        font-weight: 600 !important;
     }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# Универсальные настройки графиков Matplotlib для идеальной видимости
-plt.style.use('dark_background')
+# =====================================================================
+# НАСТРОЙКИ MATPLOTLIB ПОД СВЕТЛУЮ ТЕМУ
+# =====================================================================
 plt.rcParams.update({
-    'axes.facecolor': '#031326',
-    'figure.facecolor': '#031326',
-    'grid.color': '#1E3A5F',
-    'text.color': '#E2E8F0',
-    'axes.labelcolor': '#E2E8F0',
-    'xtick.color': '#E2E8F0',
-    'ytick.color': '#E2E8F0',
-    'axes.labelsize': 14,
-    'xtick.labelsize': 12,
-    'ytick.labelsize': 12,
-    'legend.fontsize': 12
+    'axes.facecolor': '#FFFAF0',
+    'figure.facecolor': '#F5E6D3',
+    'grid.color': '#C9A877',
+    'grid.alpha': 0.5,
+    'text.color': '#2C1810',
+    'axes.labelcolor': '#2C1810',
+    'xtick.color': '#2C1810',
+    'ytick.color': '#2C1810',
+    'axes.labelsize': 15,
+    'xtick.labelsize': 13,
+    'ytick.labelsize': 13,
+    'legend.fontsize': 13,
+    'axes.titlesize': 17,
+    'axes.titleweight': 'bold',
+    'axes.edgecolor': '#8B4513',
+    'axes.linewidth': 1.5,
+    'axes.titlecolor': '#6B3410'
 })
 
-st.markdown("<h1>🛡️ Программный комплекс оценки финансовой устойчивости страховых фондов</h1>", unsafe_allow_html=True)
+# Цвета для линий на графиках
+COLOR_M1 = '#8B4513'   # Saddle brown
+COLOR_M2 = '#B8860B'   # Dark goldenrod
+COLOR_REF = '#5D3317'  # Темно-коричневый
 
-# --- БОКОВАЯ ПАНЕЛЬ С ВВОДОМ ---
-st.sidebar.header("⚙️ Входные параметры модели")
-N = st.sidebar.number_input("Число застрахованных объектов (N), ед.", value=100, min_value=1)
-lam = st.sidebar.number_input("Интенсивность наступления рисков (λ)", value=0.01, format="%.3f")
-T = st.sidebar.slider("Период накопления резерва (T), лет", 1, 50, 10)
-S_vos = st.sidebar.number_input("Максимальный ущерб при аварии (S_max), руб", value=100000000, step=1000000)
-P_gamma = st.sidebar.slider("Заданный уровень надежности фонда (P)", 0.800, 0.999, 0.950, step=0.005)
-f = st.sidebar.slider("Доля нагрузки в брутто-тарифе (f), %", 0, 50, 20) / 100
-delta = st.sidebar.slider("Непрерывная ставка дисконтирования (δ)", 0.0, 0.20, 0.05, step=0.01)
+# =====================================================================
+# ЗАГОЛОВОК
+# =====================================================================
+st.markdown(
+    "<h1>🛡️ Программный комплекс актуарного анализа катастрофических рисков</h1>",
+    unsafe_allow_html=True
+)
 
-# --- МАТЕМАТИЧЕСКОЕ ЯДРО ---
+# =====================================================================
+# БОКОВАЯ ПАНЕЛЬ — ВХОДНЫЕ ПАРАМЕТРЫ
+# =====================================================================
+st.sidebar.markdown("## ⚙️ Параметры портфеля")
+
+N = st.sidebar.number_input(
+    "Число застрахованных объектов N, ед.",
+    value=100, min_value=1
+)
+lam = st.sidebar.number_input(
+    "Интенсивность наступления рисков λ",
+    value=0.01, format="%.3f"
+)
+T = st.sidebar.slider(
+    "Период накопления резерва T, лет",
+    1, 50, 10
+)
+S_vos = st.sidebar.number_input(
+    "Максимальный ущерб S_max, руб.",
+    value=100_000_000, step=1_000_000
+)
+P_gamma = st.sidebar.slider(
+    "Уровень надёжности фонда P",
+    0.800, 0.999, 0.950, step=0.005
+)
+f = st.sidebar.slider(
+    "Доля страховой нагрузки f, %",
+    0, 50, 20
+) / 100
+delta = st.sidebar.slider(
+    "Норма дисконтирования δ",
+    0.0, 0.20, 0.05, step=0.01
+)
+
+# =====================================================================
+# МАТЕМАТИЧЕСКОЕ ЯДРО
+# =====================================================================
 m0 = S_vos / 2
-D0 = (S_vos**2) / 12
+D0 = (S_vos ** 2) / 12
 
 def calc_model(is_disc, temp_T=None, temp_delta=None):
+    """Расчёт параметров одной из моделей."""
     t_val = temp_T if temp_T is not None else T
     d_val = temp_delta if temp_delta is not None else delta
-    
+
     if not is_disc:
         eta = N * lam * t_val
         c1, c2 = eta * m0, eta * (m0**2 + D0)
     else:
         if d_val == 0:
-            c1, c2 = N * lam * t_val * m0, N * lam * t_val * (m0**2 + D0)
+            c1 = N * lam * t_val * m0
+            c2 = N * lam * t_val * (m0**2 + D0)
         else:
             c1 = N * lam * m0 * (1 - np.exp(-d_val * t_val)) / d_val
             c2 = N * lam * (m0**2 + D0) * (1 - np.exp(-2 * d_val * t_val)) / (2 * d_val)
-    
+
     b = c1 / c2 if c2 != 0 else 1e-10
     a = c1 * b if b != 0 else 1e-10
-    
+
     Pr = gamma.ppf(P_gamma, a=a, scale=1/b) if a > 0 else 0
     Trn = (Pr * 100) / (N * S_vos * t_val) if t_val > 0 else 0
     Trbr = (Trn / (1 - f)) * (np.exp(d_val * t_val) if not is_disc else 1)
-        
+
     return Pr, Trn, Trbr, a, b
 
 r1 = calc_model(False)
 r2 = calc_model(True)
 
-# --- ИНТЕРФЕЙС: ВКЛАДКИ ---
+# =====================================================================
+# ВКЛАДКИ
+# =====================================================================
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 Сводный расчет тарифов", 
-    "📈 2D Анализ зависимостей", 
-    "🌌 3D Поверхность рисков",
-    "📚 Методология и теория",
-    "📥 Выгрузка отчетов и данных"
+    "📊 Сводный расчёт",
+    "📈 Анализ чувствительности",
+    "🌌 Поверхность тарифных решений",
+    "📚 Методология",
+    "📥 Отчёты и данные"
 ])
 
-# --- ВКЛАДКА 1: СВОДНЫЙ РАСЧЕТ ---
+# ---------------------------------------------------------------------
+# ВКЛАДКА 1 — СВОДНЫЙ РАСЧЁТ
+# ---------------------------------------------------------------------
 with tab1:
     st.markdown("## Результаты сопоставления актуарных моделей")
-    st.markdown("Здесь представлены итоговые значения необходимых резервов и расчетных ставок страховых взносов.")
-    
+    st.markdown(
+        "В блоке ниже представлены итоговые значения требуемых "
+        "страховых резервов и расчётных тарифных ставок, полученные по двум "
+        "альтернативным актуарным моделям при заданных параметрах портфеля."
+    )
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(f"""
         <div class="metric-box-m1">
-            <h3 style="margin-top:0; color:#38BDF8;">Классическая модель (Без дисконтирования)</h3>
-            <p>Необходимый стартовый капитал: <b style="font-size:22px; color:#38BDF8;">{r1[0]:,.0f} ₽</b></p>
-            <p>Расчетный брутто-тариф: <b style="font-size:22px; color:#38BDF8;">{r1[2]:.4f} %</b></p>
+            <h3 style="color:#8B4513;">Модель 1 — без учёта временной стоимости денег</h3>
+            <p>Требуемый размер резервного фонда:<br>
+            <b style="font-size:28px; color:#6B3410;">{r1[0]:,.0f} ₽</b></p>
+            <p>Расчётный брутто-тариф:<br>
+            <b style="font-size:28px; color:#6B3410;">{r1[2]:.4f} %</b></p>
         </div>
         """, unsafe_allow_html=True)
-        
+
     with col2:
         st.markdown(f"""
         <div class="metric-box-m2">
-            <h3 style="margin-top:0; color:#64FFDA;">Разработанная модель (С дисконтированием)</h3>
-            <p>Необходимый стартовый капитал: <b style="font-size:22px; color:#64FFDA;">{r2[0]:,.0f} ₽</b></p>
-            <p>Расчетный брутто-тариф: <b style="font-size:22px; color:#64FFDA;">{r2[2]:.4f} %</b></p>
+            <h3 style="color:#B8860B;">Модель 2 — с учётом инвестиционного дохода</h3>
+            <p>Требуемый размер резервного фонда:<br>
+            <b style="font-size:28px; color:#6B3410;">{r2[0]:,.0f} ₽</b></p>
+            <p>Расчётный брутто-тариф:<br>
+            <b style="font-size:28px; color:#6B3410;">{r2[2]:.4f} %</b></p>
         </div>
         """, unsafe_allow_html=True)
 
     savings = (1 - r2[2]/r1[2]) * 100 if r1[2] > 0 else 0
     st.markdown(f"""
-    <div style="background-color: #112240; padding: 15px; border-radius: 8px; border: 1px solid #38BDF8; margin-top: 15px;">
-        💡 <b>Экономическое заключение:</b> Учет временной стоимости капитала (инвестиционного дохода фонда) по Модели 2 
-        позволяет снизить тарифную нагрузку на страхователей на <b>{savings:.2f}%</b> при неизменном уровне надежности фонда ({P_gamma*100}%).
+    <div class="info-block">
+        💡 <b>Экономическая интерпретация результата.</b><br><br>
+        Учёт временной стоимости капитала (инвестиционного дохода фонда от размещения
+        собранных премий) в Модели 2 позволяет снизить тарифную нагрузку на страхователей
+        на <b style="font-size:24px;">{savings:.2f}%</b> при сохранении заданного
+        уровня финансовой устойчивости фонда <b>{P_gamma*100:.1f}%</b>.
+        Разница объясняется тем, что Модель 2 корректно учитывает доход страховщика
+        от инвестирования временно свободных средств до момента наступления страховых событий.
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("### Интегральная функция распределения совокупного ущерба")
+    st.markdown(
+        "Кривые ниже показывают вероятность того, что совокупный ущерб портфеля не "
+        "превысит заданного уровня. Вертикальные пунктирные линии отмечают значения "
+        "требуемого фонда, обеспечивающие заданный уровень надёжности."
+    )
+
     x = np.linspace(0, max(r1[0], r2[0]) * 1.4, 500)
-    fig1, ax1 = plt.subplots(figsize=(10, 3.5))
-    ax1.plot(x/1e6, gamma.cdf(x, r1[3], scale=1/r1[4]), label="Модель 1 (без дисконта)", color="#38BDF8", lw=2.5)
-    ax1.plot(x/1e6, gamma.cdf(x, r2[3], scale=1/r2[4]), label="Модель 2 (с дисконтом)", color="#F87171", ls="--", lw=2.5)
-    ax1.axhline(y=P_gamma, color="#94A3B8", ls=":", label=f"Уровень безопасности P={P_gamma}")
-    ax1.set_xlabel("Совокупный накопленный ущерб (млн. руб.)")
+    fig1, ax1 = plt.subplots(figsize=(12, 5))
+    ax1.plot(x/1e6, gamma.cdf(x, r1[3], scale=1/r1[4]),
+             label="Модель 1 — без дисконтирования", color=COLOR_M1, lw=3)
+    ax1.plot(x/1e6, gamma.cdf(x, r2[3], scale=1/r2[4]),
+             label="Модель 2 — с дисконтированием", color=COLOR_M2, ls="--", lw=3)
+    ax1.axhline(y=P_gamma, color=COLOR_REF, ls=":", lw=2,
+                label=f"Уровень надёжности P = {P_gamma}")
+    ax1.axvline(x=r1[0]/1e6, color=COLOR_M1, ls=":", lw=1.5, alpha=0.7)
+    ax1.axvline(x=r2[0]/1e6, color=COLOR_M2, ls=":", lw=1.5, alpha=0.7)
+    ax1.set_xlabel("Совокупный накопленный ущерб, млн руб.")
     ax1.set_ylabel("Вероятность покрытия R(x)")
-    ax1.grid(True, alpha=0.2)
-    ax1.legend(facecolor='#0B1E36', edgecolor='#1E3A5F')
+    ax1.grid(True, alpha=0.4)
+    ax1.legend(loc='lower right', framealpha=0.95,
+               facecolor='#FFFAF0', edgecolor='#8B4513')
     st.pyplot(fig1)
 
-# --- ВКЛАДКА 2: 2D АНАЛИТИКА ---
+# ---------------------------------------------------------------------
+# ВКЛАДКА 2 — АНАЛИЗ ЧУВСТВИТЕЛЬНОСТИ
+# ---------------------------------------------------------------------
 with tab2:
-    st.markdown("## Двумерный анализ чувствительности моделей")
-    
-    col_g1, col_g2 = st.columns(2)
-    t_array = np.arange(1, 31)
-    
-    with col_g1:
-        st.markdown("### 1. Зависимость брутто-тарифа от срока накопления")
-        trbr_m1 = [calc_model(False, temp_T=t)[2] for t in t_array]
-        trbr_m2 = [calc_model(True, temp_T=t)[2] for t in t_array]
-        fig2, ax2 = plt.subplots()
-        ax2.plot(t_array, trbr_m1, label="Модель 1 (Без дисконта)", color="#38BDF8", lw=2)
-        ax2.plot(t_array, trbr_m2, label="Модель 2 (С дисконтом)", color="#F87171", lw=2)
-        ax2.set_xlabel("Срок удержания портфеля рисков (T), лет")
-        ax2.set_ylabel("Величина брутто-тарифа (%)")
-        ax2.grid(True, alpha=0.2)
-        ax2.legend()
-        st.pyplot(fig2)
-        st.markdown("""
-        **Что означает этот график:** График иллюстрирует критическую ошибку Модели 1. Без дисконтирования страховой тариф неограниченно растет с течением времени из-за линейного накопления рисков. 
-        Модель 2 (красная линия) стабилизирует тариф, доказывая, что сложный процент от инвестирования резервов компенсирует будущие катастрофические убытки.
-        """)
-        
-    with col_g2:
-        st.markdown("### 2. Влияние ставки дисконтирования на брутто-тариф")
-        d_array = np.linspace(0, 0.18, 30)
-        trbr_d2 = [calc_model(True, temp_delta=d)[2] for d in d_array]
-        fig3, ax3 = plt.subplots()
-        ax3.plot(d_array * 100, trbr_d2, color="#64FFDA", lw=2, label="Модель 2")
-        ax3.set_xlabel("Непрерывная процентная ставка (δ), %")
-        ax3.set_ylabel("Величина брутто-тарифа (%)")
-        ax3.grid(True, alpha=0.2)
-        ax3.legend()
-        st.pyplot(fig3)
-        st.markdown("""
-        **Что означает этот график:** Этот график исследует только **Модель 2**. Он наглядно демонстрирует, как доходность размещения средств фонда влияет на стоимость страховки. 
-        Чем выше ставка дисконтирования $\delta$ (эффективность инвестиций компании), тем ниже может быть тарифный взнос для обеспечения той же финансовой устойчивости.
-        """)
+    st.markdown("## Анализ чувствительности тарифа к ключевым параметрам")
+    st.markdown(
+        "Графики ниже показывают, как изменяется итоговая величина брутто-тарифа "
+        "при варьировании одного из определяющих параметров с сохранением "
+        "остальных входных значений."
+    )
 
-# --- ВКЛАДКА 3: 3D ПОВЕРХНОСТЬ ---
-with tab3:
-    st.markdown("## Трехмерное пространство тарифных решений")
-    
+    # --- График 1: зависимость от срока T ---
+    st.markdown("### График 1. Зависимость брутто-тарифа от срока накопления T")
     st.markdown("""
-    ### 🧭 Руководство по интерпретации 3D-модели:
-    * **Ось X (Срок T):** Временной горизонт планирования (от 5 до 30 лет).
-    * **Ось Y (Дисконт δ):** Норма доходности инвестиционного портфеля страховой компании (от 1% до 15%).
-    * **Высота Z (Брутто-тариф):** Результирующий страховой тариф в %.
-    
-    **Аналитическая ценность:** Поверхность наглядно демонстрирует синергетический эффект времени и доходности. Минимальные (наиболее конкурентоспособные) тарифы находятся в области максимальных сроков и высоких ставок (самая низкая, темно-синяя часть воронки). Вы можете вращать и масштабировать этот график мышью для демонстрации на защите.
-    """)
-    
-    t_vals = np.linspace(5, 30, 30)
-    d_vals = np.linspace(0.01, 0.15, 30)
+    <div class="description-block">
+    <b>Что показывает график.</b> По горизонтальной оси отложен срок действия программы
+    страхования — период, в течение которого формируется резервный фонд. По вертикальной оси —
+    значение брутто-тарифа, выраженное в процентах от страховой суммы.<br><br>
+    <b>Как интерпретировать.</b> Каждая точка кривой отвечает на вопрос:
+    «какой тариф нужен, чтобы покрыть катастрофические убытки за заданное число лет
+    с требуемой надёжностью?». Модель 1 (без учёта инвестиций) демонстрирует
+    практически линейный рост тарифа со временем, поскольку каждый дополнительный год
+    добавляет в портфель новые риски, никак не компенсируемые доходом от размещения средств.
+    Модель 2, напротив, выходит на стабильное плато: сложный процент от инвестирования
+    резервов уравновешивает рост накопленных рисков, обеспечивая стабильность тарифа
+    на длинном горизонте.<br><br>
+    <b>Практический вывод.</b> Чем длиннее срок накопления, тем сильнее расхождение
+    моделей и тем существеннее экономия для страхователя при использовании Модели 2.
+    </div>
+    """, unsafe_allow_html=True)
+
+    t_array = np.arange(1, 31)
+    trbr_m1 = [calc_model(False, temp_T=t)[2] for t in t_array]
+    trbr_m2 = [calc_model(True, temp_T=t)[2] for t in t_array]
+    fig2, ax2 = plt.subplots(figsize=(12, 5.5))
+    ax2.plot(t_array, trbr_m1, label="Модель 1 — без дисконтирования",
+             color=COLOR_M1, lw=3, marker='o', markersize=5)
+    ax2.plot(t_array, trbr_m2, label="Модель 2 — с дисконтированием",
+             color=COLOR_M2, lw=3, marker='s', markersize=5)
+    ax2.set_xlabel("Срок накопления резерва T, лет")
+    ax2.set_ylabel("Брутто-тариф, %")
+    ax2.grid(True, alpha=0.4)
+    ax2.legend(loc='best', framealpha=0.95,
+               facecolor='#FFFAF0', edgecolor='#8B4513')
+    st.pyplot(fig2)
+
+    st.markdown("---")
+
+    # --- График 2: зависимость от δ ---
+    st.markdown("### График 2. Зависимость брутто-тарифа от нормы дисконтирования δ")
+    st.markdown(f"""
+    <div class="description-block">
+    <b>Что такое δ в этом контексте.</b> Параметр δ — это норма доходности, под которую
+    страховщик размещает временно свободные средства резервного фонда (банковские
+    депозиты, государственные облигации, инвестиционный портфель). Чем выше δ, тем
+    больший доход страховщик получает за время до наступления страховых событий.<br><br>
+    <b>Что показывает график.</b> По горизонтальной оси — значение нормы дисконтирования
+    в процентах годовых (от 0 % до 18 %). По вертикальной оси — соответствующее значение
+    брутто-тарифа Модели 2 при сроке T = {T} лет.<br><br>
+    <b>Как интерпретировать.</b> Кривая монотонно убывает: чем выше доходность размещения
+    резервов, тем ниже может быть тарифный взнос, требуемый для обеспечения той же
+    финансовой устойчивости фонда. Это происходит потому, что часть будущих страховых
+    выплат «оплачивается» инвестиционным доходом, а не премиями страхователей.<br><br>
+    <b>Практический вывод.</b> График позволяет страховой компании оценить, какой объём
+    инвестиционного дохода необходим, чтобы предлагать конкурентоспособный тариф
+    на рынке. Также он показывает чувствительность тарифа к колебаниям рыночных ставок —
+    параметр, важный для стресс-тестирования портфеля.
+    </div>
+    """, unsafe_allow_html=True)
+
+    d_array = np.linspace(0, 0.18, 30)
+    trbr_d2 = [calc_model(True, temp_delta=d)[2] for d in d_array]
+    fig3, ax3 = plt.subplots(figsize=(12, 5.5))
+    ax3.plot(d_array * 100, trbr_d2, color=COLOR_M2, lw=3,
+             marker='o', markersize=5, label="Модель 2 — с дисконтированием")
+    ax3.fill_between(d_array * 100, trbr_d2, alpha=0.15, color=COLOR_M2)
+    ax3.set_xlabel("Норма дисконтирования δ, % годовых")
+    ax3.set_ylabel("Брутто-тариф, %")
+    ax3.grid(True, alpha=0.4)
+    ax3.legend(loc='best', framealpha=0.95,
+               facecolor='#FFFAF0', edgecolor='#8B4513')
+    st.pyplot(fig3)
+
+# ---------------------------------------------------------------------
+# ВКЛАДКА 3 — 3D ПОВЕРХНОСТЬ
+# ---------------------------------------------------------------------
+with tab3:
+    st.markdown("## Трёхмерная поверхность тарифных решений")
+    st.markdown("""
+    <div class="description-block">
+    <b>Назначение графика.</b> Трёхмерная поверхность визуализирует одновременное влияние
+    двух ключевых параметров — срока накопления T и нормы дисконтирования δ — на
+    итоговую величину брутто-тарифа в Модели 2. Этот график является интегральным
+    инструментом для актуария: он позволяет одним взглядом охватить пространство
+    допустимых тарифных решений и выбрать оптимальное сочетание параметров портфеля.<br><br>
+
+    <b>Что отложено на осях:</b><br>
+    • <b>Ось X (горизонтальная вглубь)</b> — срок накопления резерва T, от 5 до 30 лет.<br>
+    • <b>Ось Y (горизонтальная вдоль)</b> — норма дисконтирования δ, от 1 % до 15 % годовых.<br>
+    • <b>Ось Z (вертикальная, высота)</b> — итоговое значение брутто-тарифа в процентах.<br><br>
+
+    <b>Как читать поверхность.</b> Цветовая шкала показывает величину тарифа: тёмные
+    оттенки соответствуют низким (благоприятным) тарифам, светлые — высоким. Возвышенные
+    участки поверхности — это области сочетания параметров, при которых страхование
+    становится дорогим (короткие сроки и низкие ставки доходности). Низменные участки —
+    зоны конкурентоспособных тарифов (длинные сроки и высокие ставки).<br><br>
+
+    <b>Управление графиком.</b> График интерактивный: его можно вращать движением мыши,
+    приближать колесом, выделять область для увеличения. Двойной щелчок возвращает
+    исходный вид. При наведении курсора отображаются точные числовые значения T, δ и тарифа.
+    </div>
+    """, unsafe_allow_html=True)
+
+    t_vals = np.linspace(5, 30, 35)
+    d_vals = np.linspace(0.01, 0.15, 35)
     T_grid, D_grid = np.meshgrid(t_vals, d_vals)
     Z = np.zeros_like(T_grid)
-    
     for i in range(T_grid.shape[0]):
         for j in range(T_grid.shape[1]):
             Z[i, j] = calc_model(True, temp_T=T_grid[i, j], temp_delta=D_grid[i, j])[2]
-            
-    fig_3d = go.Figure(data=[go.Surface(z=Z, x=T_grid, y=D_grid, colorscale='Viridis')])
+
+    fig_3d = go.Figure(data=[
+        go.Surface(
+            z=Z, x=T_grid, y=D_grid,
+            colorscale='YlOrBr',
+            reversescale=True,
+            colorbar=dict(
+                title=dict(text="Брутто-тариф, %", font=dict(size=16, color='#2C1810')),
+                tickfont=dict(size=14, color='#2C1810')
+            ),
+            contours={
+                "z": {"show": True, "start": Z.min(), "end": Z.max(),
+                      "size": (Z.max() - Z.min())/12, "color": "#5D3317"}
+            }
+        )
+    ])
     fig_3d.update_layout(
         scene=dict(
-            xaxis=dict(title='Срок (T, лет)', backgroundcolor="#0B1E36"),
-            yaxis=dict(title='Ставка дисконта (δ)', backgroundcolor="#0B1E36"),
-            zaxis=dict(title='Тариф (%)', backgroundcolor="#0B1E36"),
+            xaxis=dict(
+                title=dict(text='Срок T, лет', font=dict(size=16, color='#2C1810')),
+                tickfont=dict(size=13, color='#2C1810'),
+                backgroundcolor='#FFFAF0', gridcolor='#C9A877'
+            ),
+            yaxis=dict(
+                title=dict(text='Ставка δ', font=dict(size=16, color='#2C1810')),
+                tickfont=dict(size=13, color='#2C1810'),
+                backgroundcolor='#FFFAF0', gridcolor='#C9A877'
+            ),
+            zaxis=dict(
+                title=dict(text='Тариф, %', font=dict(size=16, color='#2C1810')),
+                tickfont=dict(size=13, color='#2C1810'),
+                backgroundcolor='#FFFAF0', gridcolor='#C9A877'
+            ),
+            camera=dict(eye=dict(x=1.6, y=1.6, z=1.0))
         ),
-        width=1100,
-        height=700,
-        paper_bgcolor="#031326",
-        font=dict(color="#E2E8F0", size=14),
-        margin=dict(l=10, r=10, b=10, t=10)
+        height=850,
+        paper_bgcolor='#F5E6D3',
+        font=dict(color='#2C1810', size=14),
+        margin=dict(l=10, r=10, b=10, t=30)
     )
     st.plotly_chart(fig_3d, use_container_width=True)
 
-# --- ВКЛАДКА 4: МЕТОДОЛОГИЯ ---
+    z_min_idx = np.unravel_index(np.argmin(Z), Z.shape)
+    z_max_idx = np.unravel_index(np.argmax(Z), Z.shape)
+    st.markdown(f"""
+    <div class="info-block">
+    📍 <b>Экстремумы поверхности.</b><br><br>
+    <b>Минимальный тариф</b> на исследованной области: <b>{Z.min():.4f}%</b><br>
+    достигается при T = {T_grid[z_min_idx]:.1f} лет, δ = {D_grid[z_min_idx]*100:.1f}%<br><br>
+    <b>Максимальный тариф</b> на исследованной области: <b>{Z.max():.4f}%</b><br>
+    достигается при T = {T_grid[z_max_idx]:.1f} лет, δ = {D_grid[z_max_idx]*100:.1f}%
+    </div>
+    """, unsafe_allow_html=True)
+
+# ---------------------------------------------------------------------
+# ВКЛАДКА 4 — МЕТОДОЛОГИЯ (расширенная)
+# ---------------------------------------------------------------------
 with tab4:
-    st.markdown("## Научно-методологическое обоснование комплекса")
-    
+    st.markdown("## Методологическое описание программного комплекса")
+
+    st.markdown("### 1. Постановка актуарной задачи")
     st.markdown("""
-    ### 1. Постановка актуарной задачи
-    При страховании крупных имущественных комплексов от **катастрофических рисков** (техногенные взрывы, экологические аварии, разрушения цехов) классические методы страхования, опирающиеся на закон больших чисел, не применимы напрямую. Вероятность единичного события крайне мала ($\lambda \to 0$), однако ущерб носит тотальный характер и исчисляется сотнями миллионов.
-    
-    Для решения этой проблемы дипломная работа реализует **временную раскладку рисков** с помощью замкнутого накопительного страхового механизма. Страховщик формирует специализированный фонд резервов на протяжении долгосрочного периода $T$, инвестируя свободные средства под непрерывную ставку процентов $\delta$.
-    
-    ### 2. Математическое описание моделей
-    Совокупный дисконтированный страховой ущерб на интервале времени $[0, T]$ аппроксимируется непрерывным **Гамма-распределением** с параметрами формы ($\alpha$) и масштаба ($\beta$).
-    
-    Для нахождения этих параметров используется метод моментов, связывающий их с первыми двумя **семиинвариантами (кумулянтами)** характеристической функции совокупных убытков.
-    
-    **Для Модели 1 (без дисконтирования потоков во времени):**
-    """)
-    st.latex(r"\chi_1 = N \cdot \lambda \cdot T \cdot m_0")
-    st.latex(r"\chi_2 = N \cdot \lambda \cdot T \cdot (m_0^2 + D_0)")
-    
-    st.markdown("**Для Модели 2 (с полным непрерывным дисконтированием страховых выплат):**")
-    st.latex(r"\chi_1 = N \lambda m_0 \frac{1 - e^{-\delta T}}{\delta}")
-    st.latex(r"\chi_2 = N \lambda (m_0^2 + D_0) \frac{1 - e^{-2\delta T}}{2\delta}")
-    
-    st.markdown("Переход от кумулянтов к структурным параметрам плотности вероятности Гамма-распределения:")
-    st.latex(r"\beta = \frac{\chi_1}{\chi_2}, \quad \alpha = \chi_1 \cdot \beta")
-    
-    st.markdown("""
-    ### 3. Алгоритм поиска тарифов
-    1. На основе Гамма-распределения вычисляется квантиль уровня доверия $P_{\gamma}$ (например, 95% или 99%), определяющий величину целевого фонда (начального капитала $P_r$).
-    2. Вычисляется Нетто-тариф ($Tr_n$), распределяющий необходимый объем фонда равномерно между всеми участниками $N$ и годами $T$.
-    3. Рассчитывается Брутто-тариф ($Tr_{br}$) с учетом административных расходов компании (нагрузка $f$). В Модели 1 на этом этапе применяется повышающий коэффициент $e^{\delta T}$, отражающий обесценение будущих денег, что приводит к завышению стоимости полиса.
+    Страхование промышленных объектов от катастрофических рисков занимает особое место
+    в актуарной практике. Объекты подобной группы — металлургические комбинаты,
+    нефтеперегонные и химические заводы, объекты атомной энергетики, крупные транспортные
+    узлы — характеризуются накоплением значительных масс пожаро- и взрывоопасных веществ,
+    высокой капиталоёмкостью и протяжёнными технологическими циклами.
+
+    Особенность данного вида страхования состоит в том, что страховые риски одновременно
+    имеют **малую частоту наступления** (порядка одного события на десятки лет на объект)
+    и **крайне высокую тяжесть последствий** — экономический ущерб от единичного события
+    может достигать десятков и сотен миллионов рублей. Это делает неприменимыми
+    классические методы массового страхования, опирающиеся на закон больших чисел.
+
+    Решением задачи служит механизм **временной раскладки риска**: страховщик принимает
+    на себя ответственность по группе объектов на длительном интервале времени T
+    (15–30 лет), за который накапливает достаточный резервный фонд для покрытия
+    возможных катастрофических убытков. Свободные средства фонда размещаются на
+    финансовом рынке под непрерывную ставку δ, что обеспечивает дополнительный
+    инвестиционный доход.
     """)
 
-# --- ВКЛАДКА 5: ДАННЫЕ И ОТЧЕТЫ ---
+    st.markdown("### 2. Типология катастрофических рисков")
+    st.markdown("""
+    Программный комплекс ориентирован на работу с рисками следующих категорий:
+
+    • **Природно-техногенные риски** — события, обусловленные воздействием природных
+    факторов (землетрясения, наводнения, ураганы) на промышленную инфраструктуру.
+
+    • **Техногенные риски** — аварии, обусловленные особенностями технологического
+    процесса: взрывы, пожары, разрушения несущих конструкций, выбросы опасных веществ.
+
+    • **Системные риски** — события, способные привести к каскадному отказу
+    взаимосвязанных производственных систем и длительной остановке технологического
+    процесса предприятия.
+
+    Общим свойством этих рисков является то, что наступление одного страхового события
+    влечёт гибель значительной массы оборудования и длительный простой, что отличает
+    данные риски от обычных имущественных и переводит их в категорию катастрофических.
+    """)
+
+    st.markdown("### 3. Параметры модели и их интерпретация")
+    st.markdown("""
+    | Параметр | Обозначение | Содержательный смысл |
+    |---|---|---|
+    | Число застрахованных объектов | N | Количество однородных предприятий, объединённых в один портфель |
+    | Интенсивность рисков | λ | Среднее число катастрофических событий на один объект в год |
+    | Период накопления | T | Длительность интервала, на котором формируется фонд |
+    | Максимальный ущерб | S_max | Восстановительная стоимость объекта при полной гибели |
+    | Уровень надёжности | P | Вероятность, с которой фонд покрывает все возможные выплаты |
+    | Доля нагрузки | f | Доля брутто-премии, идущая на покрытие расходов страховщика |
+    | Норма дисконтирования | δ | Непрерывная ставка доходности размещения средств фонда |
+    """)
+
+    st.markdown("### 4. Математическая модель совокупного ущерба")
+    st.markdown("""
+    Совокупный страховой ущерб по группе застрахованных объектов на интервале (0, T)
+    моделируется как сложный пуассоновский процесс. Число страховых событий описывается
+    распределением Пуассона с параметром, зависящим от выбранной модели. Размер ущерба
+    в единичном страховом событии аппроксимируется непрерывным **гамма-распределением**
+    с параметрами формы α и масштаба β, идентифицируемыми по первым двум семиинвариантам
+    (кумулянтам) характеристической функции совокупного ущерба.
+
+    **Модель 1.** Финансовые потоки не приводятся к единому моменту времени;
+    взносы и выплаты считаются равноценными независимо от их временной локализации.
+    Семиинварианты:
+    """)
+    st.latex(r"\chi_1 = N \lambda T \, m_0")
+    st.latex(r"\chi_2 = N \lambda T \, (m_0^2 + D_0)")
+
+    st.markdown("""
+    **Модель 2.** Финансовые потоки приводятся к начальному моменту времени операцией
+    непрерывного дисконтирования с нормой δ. Это позволяет учесть инвестиционный
+    доход от размещения временно свободных средств фонда. Семиинварианты:
+    """)
+    st.latex(r"\chi_1 = N \lambda m_0 \cdot \frac{1 - e^{-\delta T}}{\delta}")
+    st.latex(r"\chi_2 = N \lambda (m_0^2 + D_0) \cdot \frac{1 - e^{-2\delta T}}{2\delta}")
+
+    st.markdown("Переход от кумулянтов к структурным параметрам гамма-распределения:")
+    st.latex(r"\beta = \frac{\chi_1}{\chi_2}, \qquad \alpha = \chi_1 \beta")
+
+    st.markdown("### 5. Алгоритм расчёта тарифной ставки")
+    st.markdown("""
+    Расчёт выполняется в четыре последовательных этапа:
+
+    **Этап 1. Определение требуемого размера фонда.** На основе функции распределения
+    совокупного ущерба вычисляется квантиль уровня доверия P. Эта величина соответствует
+    минимальному размеру резервного фонда Pr, обеспечивающему покрытие катастрофических
+    убытков с заданной вероятностью.
+
+    **Этап 2. Расчёт нетто-ставки.** Размер фонда равномерно распределяется между всеми
+    участниками портфеля и годами действия программы:
+    """)
+    st.latex(r"Tr_n = \frac{P_r \cdot 100\%}{N \cdot S_{max} \cdot T}")
+
+    st.markdown("""
+    **Этап 3. Расчёт брутто-ставки.** К нетто-ставке добавляется страховая нагрузка f,
+    покрывающая операционные расходы страховой компании и прибыль:
+    """)
+    st.latex(r"Tr_{br} = \frac{Tr_n}{1 - f}")
+
+    st.markdown("""
+    **Этап 4. Корректировка для Модели 1.** В классической модели применяется
+    повышающий коэффициент $e^{\delta T}$, отражающий обесценение собранных премий
+    относительно момента наступления страховых выплат. Эта корректировка позволяет
+    привести базовые тарифы двух моделей к сопоставимому виду.
+    """)
+
+    st.markdown("### 6. Интерпретация результатов")
+    st.markdown("""
+    Программный комплекс предоставляет актуарию следующую информацию для принятия решений:
+
+    • **Размер фонда Pr** — стартовый капитал, который страховая компания должна
+    зарезервировать или собрать в качестве премий для покрытия катастрофических убытков
+    с заданным уровнем надёжности.
+
+    • **Брутто-тариф Tr_br** — процентная ставка от страховой суммы, по которой объекты
+    портфеля должны вносить ежегодные премии в фонд.
+
+    • **Разница тарифов между моделями** — количественная оценка экономического эффекта
+    от корректного учёта временной стоимости денег. На длинных горизонтах эта разница
+    может достигать десятков процентов.
+
+    Сопоставление двух моделей позволяет страховщику обоснованно выбрать тарифную
+    политику и продемонстрировать страхователю экономическую целесообразность
+    долгосрочных программ страхования.
+    """)
+
+    st.markdown("### 7. Ограничения и допущения модели")
+    st.markdown("""
+    При практическом применении комплекса следует учитывать следующие принятые допущения:
+
+    • Интенсивность рисков λ считается постоянной во времени — модель не учитывает
+    возможный рост или снижение аварийности из-за модернизации производств или износа.
+
+    • Норма дисконтирования δ считается постоянной — модель не учитывает колебаний
+    рыночных ставок и стресс-сценариев на финансовом рынке.
+
+    • Объекты портфеля считаются однородными — для разнородных портфелей требуется
+    кластеризация или применение многомерных моделей.
+
+    • Распределение единичного ущерба аппроксимируется гамма-распределением — для
+    сильно скошенных распределений может потребоваться использование более тяжёлых
+    хвостов (например, распределения Парето).
+    """)
+
+# ---------------------------------------------------------------------
+# ВКЛАДКА 5 — ОТЧЁТЫ И ДАННЫЕ
+# ---------------------------------------------------------------------
 with tab5:
-    st.markdown("## Сгенерированная матрица плановых показателей по годам")
-    st.markdown("Эта таблица содержит пошаговую динамику изменения тарифов по мере увеличения горизонта планирования от 1 года до заданного вами значения.")
-    
-    # Расчет датафрейма
+    st.markdown("## Матрица плановых показателей по годам")
+    st.markdown(
+        "Таблица содержит пошаговую динамику изменения требуемого фонда и тарифа "
+        "по мере увеличения горизонта планирования от 1 года до заданного значения T."
+    )
+
     data = []
     for t_step in range(1, T + 1):
         res1_t = calc_model(False, temp_T=t_step)
-        res2_t = calc_model(True, temp_T=t_step)
+        res2_t = calc_model(True,  temp_T=t_step)
         data.append({
             "Год (T)": t_step,
-            "Капитал М1 (руб)": f"{res1_t[0]:,.0f}",
-            "Капитал М2 (руб)": f"{res2_t[0]:,.0f}",
-            "Тариф М1 (%)": f"{res1_t[2]:.4f}",
-            "Тариф М2 (%)": f"{res2_t[2]:.4f}",
-            "Разница тарифов (%)": f"{((1 - res2_t[2]/res1_t[2])*100):.2f}%" if res1_t[2]>0 else "0%"
+            "Фонд М1, руб.":  f"{res1_t[0]:,.0f}",
+            "Фонд М2, руб.":  f"{res2_t[0]:,.0f}",
+            "Тариф М1, %":    f"{res1_t[2]:.4f}",
+            "Тариф М2, %":    f"{res2_t[2]:.4f}",
+            "Экономия, %":    f"{((1 - res2_t[2]/res1_t[2])*100):.2f}" if res1_t[2] > 0 else "0.00"
         })
     df = pd.DataFrame(data)
-    
-    # Сборка ЧЕТКОЙ КРУПНОЙ HTML ТАБЛИЦЫ взамен стандартного мелкого dataframe
+
     html_table = "<table class='custom-table'><thead><tr>"
     for col in df.columns:
         html_table += f"<th>{col}</th>"
@@ -351,53 +780,73 @@ with tab5:
             html_table += f"<td>{val}</td>"
         html_table += "</tr>"
     html_table += "</tbody></table>"
-    
-    # Выводим крупную таблицу
     st.markdown(html_table, unsafe_allow_html=True)
-    
-    st.markdown("## 📥 Экспорт результатов для дипломной работы")
-    st.markdown("Используйте эти кнопки, чтобы скачать готовые материалы для добавления в практическую главу и приложения к диплому.")
-    
-    # Кнопка 1: Скачивание CSV таблицы рисков
+
+    st.markdown("---")
+    st.markdown("## 📥 Экспорт результатов расчёта")
+    st.markdown(
+        "Используйте кнопки ниже для выгрузки результатов в форматах CSV "
+        "(для импорта в Excel или СУБД) и текстового отчёта (для включения в аналитические записки)."
+    )
+
     csv_data = pd.DataFrame([{
-        "Год (T)": i+1, 
-        "Тариф_М1_процент": calc_model(False, temp_T=i+1)[2], 
-        "Тариф_М2_процент": calc_model(True, temp_T=i+1)[2]} 
-        for i in range(T)]).to_csv(index=False).encode('utf-8')
-        
+        "Год_T":             i+1,
+        "Фонд_М1_руб":       calc_model(False, temp_T=i+1)[0],
+        "Фонд_М2_руб":       calc_model(True,  temp_T=i+1)[0],
+        "Тариф_М1_процент":  calc_model(False, temp_T=i+1)[2],
+        "Тариф_М2_процент":  calc_model(True,  temp_T=i+1)[2]
+    } for i in range(T)]).to_csv(index=False).encode('utf-8-sig')
+
     st.download_button(
-        label="📥 СКАЧАТЬ ТАБЛИЦУ РАСЧЕТОВ (ДЛЯ EXCEL)",
+        label="📊  СКАЧАТЬ ТАБЛИЦУ РАСЧЁТОВ (CSV ДЛЯ EXCEL)",
         data=csv_data,
         file_name='insurance_matrix_report.csv',
         mime='text/csv',
+        use_container_width=True
     )
-    
-    # Кнопка 2: Скачивание текстового заключения
-    report_text = f"""АНАЛИТИЧЕСКИЙ ОТЧЕТ ПО РЕЗУЛЬТАТАМ МОДЕЛИРОВАНИЯ
-===================================================
-Выполнено в рамках дипломного проектирования.
 
-ИСХОДНЫЕ МАКРОПАРАМЕТРЫ ПОРТФЕЛЯ:
-- Количество застрахованных объектов (N): {N} ед.
-- Базовая интенсивность катастроф (λ): {lam}
-- Максимальный лимит ответственности (S_max): {S_vos:,.2f} руб.
-- Заданная надежность резервного фонда (P): {P_gamma*100}%
-- Непрерывная норма дисконтирования (δ): {delta*100}%
+    savings = (1 - r2[2]/r1[2]) * 100 if r1[2] > 0 else 0
+    report_text = f"""АНАЛИТИЧЕСКИЙ ОТЧЁТ ПО РЕЗУЛЬТАТАМ АКТУАРНОГО МОДЕЛИРОВАНИЯ
+================================================================
 
-ИТОГОВЫЕ ТАРИФНЫЕ СТАВКИ (Для расчетного периода T = {T} лет):
-1. Классический подход (Модель 1 без дисконта): {r1[2]:.4f} %
-2. Модифицированный подход (Модель 2 с полным дисконтом): {r2[2]:.4f} %
+ИСХОДНЫЕ ПАРАМЕТРЫ ПОРТФЕЛЯ
+----------------------------------------------------------------
+Количество застрахованных объектов (N):       {N} ед.
+Интенсивность катастрофических событий (λ):    {lam}
+Максимальный лимит ответственности (S_max):    {S_vos:,.2f} руб.
+Заданная надёжность резервного фонда (P):      {P_gamma*100:.1f}%
+Норма дисконтирования (δ):                     {delta*100:.1f}% годовых
+Период накопления (T):                         {T} лет
+Доля страховой нагрузки (f):                   {f*100:.1f}%
 
-НАУЧНО-ПРАКТИЧЕСКИЙ ВЫВОД:
-Внедрение разработанной математической модели 2 обеспечивает снижение 
-конечной стоимости страховой защиты на {savings:.2f}% по сравнению с классическим расчетом. 
-Экономический эффект достигается за счет точной капитализации инвестиционного дохода 
-от размещения временно свободных средств страховых резервов фонда. Финансовая надежность 
-фонда полностью удовлетворяет жесткому критерию устойчивости и составляет {P_gamma*100}%.
+РЕЗУЛЬТАТЫ РАСЧЁТА
+----------------------------------------------------------------
+Модель 1 (без учёта временной стоимости денег):
+   — Требуемый размер фонда:    {r1[0]:,.2f} руб.
+   — Брутто-тариф:               {r1[2]:.4f} %
+
+Модель 2 (с учётом инвестиционного дохода):
+   — Требуемый размер фонда:    {r2[0]:,.2f} руб.
+   — Брутто-тариф:               {r2[2]:.4f} %
+
+СРАВНИТЕЛЬНЫЙ АНАЛИЗ
+----------------------------------------------------------------
+Применение Модели 2 обеспечивает снижение тарифной нагрузки
+на страхователей на {savings:.2f}% при сохранении заданного уровня
+финансовой устойчивости фонда ({P_gamma*100:.1f}%).
+
+Экономический эффект достигается за счёт корректной капитализации
+инвестиционного дохода от размещения временно свободных средств
+страховых резервов на финансовом рынке под непрерывную ставку
+δ = {delta*100:.1f}% годовых.
+
+================================================================
 """
+
     st.download_button(
-        label="📄 СКАЧАТЬ ГОТОВОЕ ТЕКСТОВОЕ ЗАКЛЮЧЕНИЕ (ДЛЯ ВСТАВКИ В ТЕКСТ ДИПЛОМА)",
-        data=report_text,
-        file_name='academic_conclusion.txt',
+        label="📄  СКАЧАТЬ ТЕКСТОВЫЙ ОТЧЁТ С ВЫВОДАМИ",
+        data=report_text.encode('utf-8'),
+        file_name='analytical_report.txt',
         mime='text/plain',
+        use_container_width=True
     )
